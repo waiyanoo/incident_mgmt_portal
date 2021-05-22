@@ -2,7 +2,7 @@ import React from 'react';
 
 import { userService } from '@/_services';
 
-class AdminPage extends React.Component {
+class EditUserPage extends React.Component {
     constructor(props) {
         super(props);
 
@@ -12,7 +12,9 @@ class AdminPage extends React.Component {
     }
 
     componentDidMount() {
-        userService.getAll().then(users => this.setState({ users }));
+        userService.getAll().then(users => {
+            this.setState({ users })
+        });
     }
 
     render() {
@@ -22,13 +24,12 @@ class AdminPage extends React.Component {
                 <h1>Admin</h1>
                 <p>This page can only be accessed by administrators.</p>
                 <div>
-                    All users from secure (admin only) api end point:
                     {users &&
-                        <ul>
-                            {users.map(user =>
-                                <li key={user.id}>{user.firstName} {user.lastName}</li>
-                            )}
-                        </ul>
+                    <ul>
+                        {users.map(user =>
+                            <li key={user.id}>{user.fullName}</li>
+                        )}
+                    </ul>
                     }
                 </div>
             </div>
@@ -36,4 +37,4 @@ class AdminPage extends React.Component {
     }
 }
 
-export { AdminPage };
+export { EditUserPage };
