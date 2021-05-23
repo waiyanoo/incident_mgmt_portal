@@ -12,6 +12,7 @@ import {
     TableRow
 } from "@material-ui/core";
 import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
+import {Alert} from "@material-ui/lab";
 
 class IncidentPage extends React.Component {
     constructor(props) {
@@ -19,7 +20,7 @@ class IncidentPage extends React.Component {
 
 
         this.state = {
-            incidents: null,
+            incidents: [],
             meta: null,
             currentUser: authenticationService.currentUserValue,
             userFromApi: null,
@@ -47,9 +48,13 @@ class IncidentPage extends React.Component {
     }
 
     getUserName(id){
-        const { users } = this.state
-        const user = users.find(user => user.id === id);
-        return user ? user.fullName : '-';
+        const { users, currentUser } = this.state
+        if(currentUser.role === 'Admin'){
+            const user = users.find(user => user.id === id);
+            return user ? user.fullName : '-';
+        }
+        return currentUser.fullName;
+
     }
 
     render() {
@@ -66,7 +71,7 @@ class IncidentPage extends React.Component {
                     {currentUser.role === 'Admin' && <EditIncidentDialog users={users} callbackModal={this.callbackModal}/>}
                 </Grid>
 
-                {incidents &&
+                {incidents.length > 0 &&
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
@@ -101,6 +106,8 @@ class IncidentPage extends React.Component {
                         </TableBody>
                     </Table>
                 </TableContainer>}
+                {incidents === null || incidents.length <=0 &&
+                <Alert severity="warning">There are no incident.</Alert>}
             </Container>
         );
     }
