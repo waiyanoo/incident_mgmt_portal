@@ -5,16 +5,17 @@ export const incidentService = {
     create,
     update,
     getAll,
-    getById
+    getById,
+    acknowledge
 };
 
 function getAll() {
-    const requestOptions = { method: 'GET', headers: authHeader() };
+    const requestOptions = {method: 'GET', headers: authHeader()};
     return fetch(`${config.apiUrl}/incidents`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
-    const requestOptions = { method: 'GET', headers: authHeader() };
+    const requestOptions = {method: 'GET', headers: authHeader()};
     return fetch(`${config.apiUrl}/incidents/${id}`, requestOptions).then(handleResponse);
 }
 
@@ -33,4 +34,13 @@ function update({id, typeOfIncident, location, datetimeOfIncident, nameOfAffecte
         body: JSON.stringify({ typeOfIncident, location, datetimeOfIncident, nameOfAffected, nameOfSupervisor, descriptionOfIncident, rootCaseOfAccident, nameOfHandler })
     };
     return fetch(`${config.apiUrl}/incidents/${id}`, requestOptions).then(handleResponse);
+}
+
+function acknowledge(id) {
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({})
+    };
+    return fetch(`${config.apiUrl}/incidents/${id}/acknowledge`, requestOptions).then(handleResponse);
 }

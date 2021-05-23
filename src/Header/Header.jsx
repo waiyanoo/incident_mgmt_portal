@@ -39,9 +39,10 @@ class Header extends React.Component {
     logout() {
         authenticationService.logout();
     }
+
     render() {
-        const { classes } = this.props;
-        const { currentUser, isAdmin } = this.state;
+        const {classes} = this.props;
+        const {currentUser, isAdmin} = this.state;
         return (
             <div>
                 {currentUser &&

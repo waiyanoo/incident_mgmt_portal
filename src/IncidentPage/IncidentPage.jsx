@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
 import {Alert} from "@material-ui/lab";
+import AcknowledgedIncidentDialog from "@/IncidentPage/AcknowledgedIncidentDialog";
 
 class IncidentPage extends React.Component {
     constructor(props) {
@@ -31,26 +32,26 @@ class IncidentPage extends React.Component {
     }
 
     componentDidMount() {
-        const { currentUser } = this.state;
-        userService.getById(currentUser.id).then(userFromApi => this.setState({ userFromApi }));
-        if(currentUser.role === 'Admin'){
-            userService.getAll().then(users => this.setState({ users }));
+        const {currentUser} = this.state;
+        userService.getById(currentUser.id).then(userFromApi => this.setState({userFromApi}));
+        if (currentUser.role === 'Admin') {
+            userService.getAll().then(users => this.setState({users}));
         }
         this.retrieveIncidents();
     }
 
-    callbackModal(){
+    callbackModal() {
         this.retrieveIncidents();
     }
 
-    retrieveIncidents(){
-        incidentService.getAll().then(incidents => this.setState({ incidents: incidents.data, meta: incidents.meta }));
+    retrieveIncidents() {
+        incidentService.getAll().then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
     }
 
-    getUserName(id){
-        const { users, currentUser } = this.state
-        if(currentUser.role === 'Admin'){
-            const user = users.find(user => user.id === id);
+    getUserName(id) {
+        const {users, currentUser} = this.state
+        if (currentUser.role === 'Admin') {
+            const user = users ? users.find(user => user.id === id) : null;
             return user ? user.fullName : '-';
         }
         return currentUser.fullName;
@@ -58,7 +59,7 @@ class IncidentPage extends React.Component {
     }
 
     render() {
-        const { incidents , currentUser, users} = this.state;
+        const {incidents, currentUser, users} = this.state;
         return (
             <Container>
                 <Grid
@@ -68,7 +69,8 @@ class IncidentPage extends React.Component {
                     alignItems="center"
                 >
                     <h2>Incident</h2>
-                    {currentUser.role === 'Admin' && <EditIncidentDialog users={users} callbackModal={this.callbackModal}/>}
+                    {currentUser.role === 'Admin' &&
+                    <EditIncidentDialog users={users} callbackModal={this.callbackModal}/>}
                 </Grid>
 
                 {incidents.length > 0 &&
@@ -97,20 +99,24 @@ class IncidentPage extends React.Component {
                                     <TableCell align="left">{row.isAcknowledged ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="left">{row.isResolved ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="right">
-
-                                        {row.nameOfHandler === '' && currentUser.role === 'Admin' && <EditIncidentDialog users={users} incident={row} callbackModal={this.callbackModal}/>}
-
+                                        {row.nameOfHandler === '' && currentUser.role === 'Admin' &&
+                                        <EditIncidentDialog users={users} incident={row}
+                                                            callbackModal={this.callbackModal}/>}
+                                        {row.nameOfHandler !== '' &&
+                                        row.isAcknowledged === 'false' &&
+                                        row.nameOfHandler === currentUser.id &&
+                                        <AcknowledgedIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>}
-                {incidents === null || incidents.length <=0 &&
+                {incidents.length <= 0 &&
                 <Alert severity="warning">There are no incident.</Alert>}
             </Container>
         );
     }
 }
 
-export { IncidentPage };
+export {IncidentPage};

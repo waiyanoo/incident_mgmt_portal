@@ -27,16 +27,16 @@ class UserPage extends React.Component {
         this.retrieveUsers();
     }
 
-    callbackModal(){
+    callbackModal() {
         this.retrieveUsers();
     }
 
-    retrieveUsers(){
-        userService.getAll().then(users => this.setState({ users }));
+    retrieveUsers() {
+        userService.getAll().then(users => this.setState({users}));
     }
 
     render() {
-        const { users } = this.state;
+        const {users} = this.state;
         return (
             <Container>
                 <Grid
@@ -84,5 +84,5 @@ class UserPage extends React.Component {
     }
 }
 
-export { UserPage };
+export {UserPage};
 
