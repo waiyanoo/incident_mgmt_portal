@@ -53,6 +53,11 @@ class Header extends React.Component {
                                     <ListItemText primary={'home'}/>
                                 </ListItem>
                             </a>
+                            <a href={'/incident'} key={'Incident'} className={classes.linkText}>
+                                <ListItem button>
+                                    <ListItemText primary={'incident'}/>
+                                </ListItem>
+                            </a>
                             {isAdmin && <a href={'/user'} key={'user'} className={classes.linkText}>
                                 <ListItem button>
                                     <ListItemText primary={'user'}/>
