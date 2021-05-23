@@ -21,15 +21,15 @@ function getById(id) {
 function create({fullName, email, role, password}) {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeader(),
         body: JSON.stringify({ fullName, email, role, password })
     };
     return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
 }
 function update({id, fullName, email, role, password}) {
     const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT',
+        headers: authHeader(),
         body: JSON.stringify({ fullName, email, role, password })
     };
     return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);

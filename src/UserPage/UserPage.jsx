@@ -3,7 +3,6 @@ import {userService} from '@/_services';
 import {
     Container,
     Grid,
-    IconButton,
     Paper,
     Table,
     TableBody,
@@ -12,7 +11,6 @@ import {
     TableHead,
     TableRow
 } from "@material-ui/core";
-import EditIcon from '@material-ui/icons/Edit';
 import EditUserDialog from "@/UserPage/EditUserDialog";
 
 class UserPage extends React.Component {
@@ -22,22 +20,19 @@ class UserPage extends React.Component {
         this.state = {
             users: null
         };
-
-        const { history } = this.props;
-
-        console.log(history)
+        this.callbackModal = this.callbackModal.bind(this);
     }
 
     componentDidMount() {
+        this.retrieveUsers();
+    }
+
+    callbackModal(){
+        this.retrieveUsers();
+    }
+
+    retrieveUsers(){
         userService.getAll().then(users => this.setState({ users }));
-    }
-
-    editHandler(id){
-        this.props.history.push(`/user/${id}`);
-    }
-
-    createNewHandler(){
-        this.props.history.push(`/createuser`);
     }
 
     render() {
@@ -51,7 +46,7 @@ class UserPage extends React.Component {
                     alignItems="center"
                 >
                     <h2>User</h2>
-                    <EditUserDialog/>
+                    <EditUserDialog callbackModal={this.callbackModal}/>
                 </Grid>
 
                 {users &&
@@ -76,7 +71,7 @@ class UserPage extends React.Component {
                                     <TableCell align="left">{row.role}</TableCell>
                                     <TableCell align="left">{row.isActive ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="right">
-                                        <EditUserDialog user={row}/>
+                                        <EditUserDialog user={row} callbackModal={this.callbackModal}/>
 
                                     </TableCell>
                                 </TableRow>

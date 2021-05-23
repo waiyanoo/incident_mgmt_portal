@@ -2,10 +2,12 @@ import React from 'react';
 import {
     Button,
     Dialog, DialogActions, DialogContent,
-    DialogTitle, Grid, MenuItem, TextField
+    DialogTitle, Grid, MenuItem, Snackbar, TextField
 } from "@material-ui/core";
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+import {userService} from "@/_services";
+import {Alert} from "@material-ui/lab";
 
 class EditUserDialog extends React.Component {
     constructor(props) {
@@ -14,25 +16,42 @@ class EditUserDialog extends React.Component {
             user: this.props.user,
             isError: false,
             isCreate: true,
-            open: false
+            open: false,
+            showSuccess: false,
+            showError: false
         };
 
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleSuccessSnackbarOpen = this.handleSuccessSnackbarOpen.bind(this);
+        this.handlSnackbarClose = this.handlSnackbarClose.bind(this);
+        this.handleErrorSnackbarOpen = this.handleErrorSnackbarOpen.bind(this);
     }
 
     handleClickOpen(){
-        this.setState({open: true})
+        this.setState({open: true});
     };
 
     handleClose(){
-        this.setState({open: false})
+        this.props.callbackModal();
+        this.setState({open: false});
     };
 
-    render() {
-        const { user, open } = this.state;
+    handleSuccessSnackbarOpen(){
+        this.setState({showSuccess: true});
+    }
 
-       return (
+    handleErrorSnackbarOpen(){
+        this.setState({showError: true});
+    }
+
+    handlSnackbarClose(){
+        this.setState({showSuccess: false, showError: false});
+    }
+
+    render() {
+        const { user, open, showSuccess, showError } = this.state;
+        return (
             <div>
                     <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
                         {user ? 'Edit':  'Create New User'}
@@ -43,10 +62,27 @@ class EditUserDialog extends React.Component {
                         <DialogContent>
                             <Formik
                                 onSubmit={(values, { setSubmitting }) => {
+                                    const data = {id: user.id, fullName: values.fullName, email: values.email, role: values.role, password: values.password};
                                     if(user){
-                                        alert('update');
+                                        userService.update(data)
+                                            .then(response => {
+                                                if(response){
+                                                    this.handleSuccessSnackbarOpen();
+                                                    this.handleClose();
+                                                } else{
+                                                    this.handleErrorSnackbarOpen();
+                                                }
+                                            })
                                     } else {
-                                        alert('create');
+                                        userService.create(data)
+                                            .then( response => {
+                                                if(response){
+                                                    this.handleSuccessSnackbarOpen();
+                                                    this.handleClose();
+                                                } else{
+                                                    this.handleErrorSnackbarOpen();
+                                                }
+                                            })
                                     }
                                 }}
                                 initialValues={{
@@ -66,10 +102,10 @@ class EditUserDialog extends React.Component {
                                         .string('Enter user email')
                                         .email('Enter a valid email')
                                         .required('Email is required'),
-                                    password: Yup
+                                    password: !user ? Yup
                                         .string('Enter user password')
                                         .min(8, 'Password should be of minimum 8 characters length')
-                                        .required('Password is required'),
+                                        .required('Password is required') : Yup.string(),
                                 })}
                                 >
                                 { props => { const {
@@ -105,11 +141,12 @@ class EditUserDialog extends React.Component {
                                                     User
                                                 </MenuItem>
                                             </TextField>
+                                            {!user &&
                                             <TextField label="Password" name="password" value={values.password} onChange={handleChange}
                                                        type="password" fullWidth={true}
                                                        error={errors.password && touched.password}
                                                        helperText={errors.password && touched.password ? 'Password is required' : ' '}
-                                            />
+                                            />}
                                         </Grid>
                                         <DialogActions>
                                             <Button type="button" onClick={handleReset}>Rest</Button>
@@ -120,6 +157,16 @@ class EditUserDialog extends React.Component {
                             </Formik>
                         </DialogContent>
                     </Dialog>
+                    <Snackbar open={showSuccess} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
+                        <Alert onClose={this.handlSnackbarClose} severity="success">
+                            {user ? 'User successfully updated.' : 'User successfully created.'}
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={showError} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
+                        <Alert onClose={this.handlSnackbarClose} severity="error">
+                            {user ? 'Failed to update user. Please try again.' : 'Failed to create user. Please try again.'}
+                        </Alert>
+                    </Snackbar>
                 </div>
         );
     }
