@@ -2,8 +2,6 @@ import React from 'react';
 import {AppBar, Container, List, ListItem, ListItemText, withStyles} from "@material-ui/core";
 import {authenticationService} from "@/_services";
 import {Role} from "@/_helpers";
-import {connect} from "react-redux";
-import {withRouter} from "react-router-dom";
 
 const styles = (theme) => ({
     navbarDisplayFlex: {
@@ -55,12 +53,11 @@ class Header extends React.Component {
                                     <ListItemText primary={'home'}/>
                                 </ListItem>
                             </a>
-                            {isAdmin && <a href={'/admin'} key={'admin'} className={classes.linkText}>
+                            {isAdmin && <a href={'/user'} key={'user'} className={classes.linkText}>
                                 <ListItem button>
-                                    <ListItemText primary={'admin'}/>
+                                    <ListItemText primary={'user'}/>
                                 </ListItem>
                             </a>}
-
                             <a href={'/login'} onClick={this.logout} key={'Logout'} className={classes.linkText}>
                                 <ListItem button>
                                     <ListItemText primary={'Logout'}/>

@@ -1,10 +1,8 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-
 import { authenticationService } from '@/_services';
-import {Button, Card, CardContent, Grid, TextField} from "@material-ui/core";
+import {Button, Card, CardContent, CircularProgress, Grid, TextField} from "@material-ui/core";
 import {Alert} from "@material-ui/lab";
+import {green} from "@material-ui/core/colors";
 
 const styles = {
     cardStyle : {
@@ -12,6 +10,14 @@ const styles = {
     },
     alertPadding: {
         marginTop: 15
+    },
+    buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
     }
 };
 
@@ -45,14 +51,13 @@ class LoginPage extends React.Component {
 
         this.setState({ submitted: true });
         const { username, password } = this.state;
-        const { dispatch } = this.props;
         authenticationService.login(username, password)
             .then(
-                user => {
+                () => {
                     const { from } = this.props.location.state || { from: { pathname: "/" } };
                     this.props.history.push(from);
                 },
-                error => {
+                _error => {
                     this.setState({password: '', isError : true})
                 }
             );
@@ -74,32 +79,31 @@ class LoginPage extends React.Component {
                         <CardContent>
                             <h2>Login</h2>
                             <form noValidate autoComplete="off"  onSubmit={this.handleSubmit}>
-                                <Grid
-                                    container
-                                    direction="column"
-                                    justify="center"
-                                    alignItems="stretch"
-                                >
-                                    <TextField label="Email" name="username" value={username} onChange={this.handleChange}
-                                               type="email"
-                                               error={submitted && !username}
-                                               helperText={submitted && !username ? 'Email is required' : ' '}
-                                    />
-                                    <TextField label="Password" name="password" value={password} onChange={this.handleChange}
-                                               type="password"
-                                               error={submitted && !password}
-                                               helperText={submitted && !password ? 'Password is required' : ' '}
-                                    />
-                                    <Button variant="contained" type="submit" color="primary">
-                                        Login
-                                    </Button>
-                                    {loggingIn &&
-                                    <img alt="img" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-                                    }
-                                    {isError &&
-                                    <Alert style={styles.alertPadding} severity="error">Email or password is incorrect!</Alert>}
-                                </Grid>
-                            </form>
+                            <Grid
+                                container
+                                direction="column"
+                                justify="center"
+                                alignItems="stretch"
+                            >
+                                <TextField label="Email" name="username" value={username} onChange={this.handleChange}
+                                           type="email"
+                                           error={submitted && !username}
+                                           helperText={submitted && !username ? 'Email is required' : ' '}
+                                />
+                                <TextField label="Password" name="password" value={password} onChange={this.handleChange}
+                                           type="password"
+                                           error={submitted && !password}
+                                           helperText={submitted && !password ? 'Password is required' : ' '}
+                                />
+                                <Button variant="contained" type="submit" color="primary">
+                                    Login
+                                </Button>
+                                {loggingIn && <CircularProgress size={24} className={styles.buttonProgress} />
+                                }
+                                {isError &&
+                                <Alert style={styles.alertPadding} severity="error">Email or password is incorrect!</Alert>}
+                            </Grid>
+                        </form>
                         </CardContent>
                     </Card>
                 </Grid>
