@@ -15,22 +15,22 @@ function getAll() {
 
 function getById(id) {
     const requestOptions = { method: 'GET', headers: authHeader() };
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/incidents/${id}`, requestOptions).then(handleResponse);
 }
 
-function create({fullName, email, role, password}) {
+function create({typeOfIncident, location, datetimeOfIncident, nameOfAffected, nameOfSupervisor, descriptionOfIncident, rootCaseOfAccident, nameOfHandler}) {
     const requestOptions = {
         method: 'POST',
         headers: authHeader(),
-        body: JSON.stringify({ fullName, email, role, password })
+        body: JSON.stringify({ typeOfIncident, location, datetimeOfIncident, nameOfAffected, nameOfSupervisor, descriptionOfIncident, rootCaseOfAccident, nameOfHandler })
     };
-    return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/incidents`, requestOptions).then(handleResponse);
 }
-function update({id, fullName, email, role, password}) {
+function update({id, typeOfIncident, location, datetimeOfIncident, nameOfAffected, nameOfSupervisor, descriptionOfIncident, rootCaseOfAccident, nameOfHandler}) {
     const requestOptions = {
         method: 'PUT',
         headers: authHeader(),
-        body: JSON.stringify({ fullName, email, role, password })
+        body: JSON.stringify({ typeOfIncident, location, datetimeOfIncident, nameOfAffected, nameOfSupervisor, descriptionOfIncident, rootCaseOfAccident, nameOfHandler })
     };
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/incidents/${id}`, requestOptions).then(handleResponse);
 }

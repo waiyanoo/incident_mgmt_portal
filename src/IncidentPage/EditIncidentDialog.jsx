@@ -7,6 +7,7 @@ import {
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {Alert} from "@material-ui/lab";
+import {incidentService, userService} from "@/_services";
 
 const INCIDENT_TYPES = [
     { key: 'injury', value: 'Injury'},
@@ -19,7 +20,8 @@ class EditIncidentDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            incident: this.props.incident,
+            incident: this.props.incident ? this.props.incident : null,
+            users: this.props.users,
             isError: false,
             isCreate: true,
             open: false,
@@ -56,7 +58,7 @@ class EditIncidentDialog extends React.Component {
     }
 
     render() {
-        const { incident, open, showSuccess, showError } = this.state;
+        const { incident, users, open, showSuccess, showError } = this.state;
         return (
             <div>
                 <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
@@ -69,7 +71,15 @@ class EditIncidentDialog extends React.Component {
                         <Formik
 
                             onSubmit={(values) => {
-                                const data = {id: incident.id, fullName: values.fullName, email: values.email, role: values.role, password: values.password};
+                                const data = {id: '',
+                                    typeOfIncident : values.typeOfIncident,
+                                    location: values.location,
+                                    datetimeOfIncident: values.datetimeOfIncident,
+                                    nameOfAffected : values.nameOfAffected,
+                                    nameOfSupervisor: values.nameOfSupervisor,
+                                    descriptionOfIncident: values.descriptionOfIncident,
+                                    rootCaseOfAccident: values.rootCaseOfAccident,
+                                    nameOfHandler: values.nameOfHandler};
                                 if(incident){
                                     // userService.update(data)
                                     //     .then(response => {
@@ -81,15 +91,15 @@ class EditIncidentDialog extends React.Component {
                                     //         }
                                     //     })
                                 } else {
-                                    // userService.create(data)
-                                    //     .then( response => {
-                                    //         if(response){
-                                    //             this.handleSuccessSnackbarOpen();
-                                    //             this.handleClose();
-                                    //         } else{
-                                    //             this.handleErrorSnackbarOpen();
-                                    //         }
-                                    //     })
+                                    incidentService.create(data)
+                                        .then( response => {
+                                            if(response){
+                                                this.handleSuccessSnackbarOpen();
+                                                this.handleClose();
+                                            } else{
+                                                this.handleErrorSnackbarOpen();
+                                            }
+                                        })
                                 }
                             }}
                             initialValues={{
@@ -148,8 +158,7 @@ class EditIncidentDialog extends React.Component {
                                                        <MenuItem key={type.key} value={type.key}>
                                                            {type.value}
                                                        </MenuItem>)
-                                                }
-                                                )}
+                                                })}
                                             </TextField>
                                             <TextField label="Location" name="location" value={values.location} onChange={handleChange}
                                                        type="text" fullWidth={true} multiline rowsMax={3}
@@ -182,12 +191,12 @@ class EditIncidentDialog extends React.Component {
                                             <TextField label="Name of Handler" name="nameOfHandler" value={values.nameOfHandler} onChange={handleChange}
                                                        select fullWidth={true}
                                             >
-                                                <MenuItem key={"Admin"} value={"Admin"}>
-                                                    Admin
-                                                </MenuItem>
-                                                <MenuItem key={"User"} value={"User"}>
-                                                    User
-                                                </MenuItem>
+                                                {users.map( user => {
+                                                    return(
+                                                        <MenuItem key={user.id} value={user.id}>
+                                                            {user.fullName}
+                                                        </MenuItem>)
+                                                })}
                                             </TextField>
                                         </Grid>
                                         <DialogActions>

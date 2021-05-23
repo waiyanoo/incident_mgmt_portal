@@ -26,11 +26,11 @@ function create({fullName, email, role, password}) {
     };
     return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
 }
-function update({id, fullName, email, role, password}) {
+function update({id, fullName, email, role}) {
     const requestOptions = {
         method: 'PUT',
         headers: authHeader(),
-        body: JSON.stringify({ fullName, email, role, password })
+        body: JSON.stringify({ fullName, email, role })
     };
     return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {incidentService} from "@/_services";
+import {authenticationService, incidentService, userService} from "@/_services";
 import {
     Container,
     Grid,
@@ -21,10 +21,24 @@ class IncidentPage extends React.Component {
         this.state = {
             incidents: null,
             meta: null,
+            currentUser: authenticationService.currentUserValue,
+            userFromApi: null,
+            users: null
         };
+
+        this.callbackModal = this.callbackModal.bind(this);
     }
 
     componentDidMount() {
+        const { currentUser } = this.state;
+        userService.getById(currentUser.id).then(userFromApi => this.setState({ userFromApi }));
+        if(currentUser.role === 'Admin'){
+            userService.getAll().then(users => this.setState({ users }));
+        }
+        this.retrieveIncidents();
+    }
+
+    callbackModal(){
         this.retrieveIncidents();
     }
 
@@ -32,9 +46,14 @@ class IncidentPage extends React.Component {
         incidentService.getAll().then(incidents => this.setState({ incidents: incidents.data, meta: incidents.meta }));
     }
 
+    getUserName(id){
+        const { users } = this.state
+        const user = users.find(user => user.id === id);
+        return user ? user.fullName : '-';
+    }
+
     render() {
-        const { incidents } = this.state;
-        console.log(incidents)
+        const { incidents , currentUser, users} = this.state;
         return (
             <Container>
                 <Grid
@@ -44,7 +63,7 @@ class IncidentPage extends React.Component {
                     alignItems="center"
                 >
                     <h2>Incident</h2>
-                    <EditIncidentDialog callbackModal={this.callbackModal}/>
+                    {currentUser.role === 'Admin' && <EditIncidentDialog users={users} callbackModal={this.callbackModal}/>}
                 </Grid>
 
                 {incidents &&
@@ -69,11 +88,12 @@ class IncidentPage extends React.Component {
                                     </TableCell>
                                     <TableCell align="left">{row.datetimeOfIncident}</TableCell>
                                     <TableCell align="left">{row.location}</TableCell>
-                                    <TableCell align="left">{row.nameOfHandler}</TableCell>
+                                    <TableCell align="left">{this.getUserName(row.nameOfHandler)}</TableCell>
                                     <TableCell align="left">{row.isAcknowledged ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="left">{row.isResolved ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="right">
-                                        {/*<EditUserDialog user={row} callbackModal={this.callbackModal}/>*/}
+
+                                        {row.nameOfHandler === '' && currentUser.role === 'Admin' && <EditIncidentDialog users={users} incident={row} callbackModal={this.callbackModal}/>}
 
                                     </TableCell>
                                 </TableRow>
