@@ -109,7 +109,7 @@ class EditUserDialog extends React.Component {
                                 })}
                                 >
                                 { props => { const {
-                                    values, touched, errors, isSubmitting, handleChange, handleSubmit, handleReset
+                                    values, touched, errors, isSubmitting, handleChange, handleSubmit
                                 } = props;
                                 return (
                                     <form onSubmit={handleSubmit}>
@@ -149,8 +149,8 @@ class EditUserDialog extends React.Component {
                                             />}
                                         </Grid>
                                         <DialogActions>
-                                            <Button type="button" onClick={handleReset}>Rest</Button>
-                                            <Button type="submit" variant="outlined"  disabled={isSubmitting}>Save</Button>
+                                            <Button type="button" onClick={this.handleClose}>cancel</Button>
+                                            <Button type="submit" variant="outlined" color="primary" disabled={isSubmitting}>Save</Button>
                                         </DialogActions>
                                     </form>
                                 )}}
