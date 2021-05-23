@@ -1,8 +1,8 @@
 import React from 'react';
-import { userService } from '@/_services';
+import {userService} from '@/_services';
 import {
-    Button,
     Container,
+    Grid,
     IconButton,
     Paper,
     Table,
@@ -13,7 +13,7 @@ import {
     TableRow
 } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
-import {Route} from "react-router-dom";
+import EditUserDialog from "@/UserPage/EditUserDialog";
 
 class UserPage extends React.Component {
     constructor(props) {
@@ -44,11 +44,16 @@ class UserPage extends React.Component {
         const { users } = this.state;
         return (
             <Container>
-                <h2>User</h2>
-                <Button variant="contained" color="primary"
-                        onClick={this.createNewHandler.bind(this)}>
-                    Create new user
-                </Button>
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                >
+                    <h2>User</h2>
+                    <EditUserDialog/>
+                </Grid>
+
                 {users &&
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">

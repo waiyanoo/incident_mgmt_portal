@@ -7,7 +7,7 @@ import { PrivateRoute } from '@/_components';
 import { HomePage } from '@/HomePage';
 import { LoginPage } from '@/LoginPage';
 import Header from "@/Header/Header";
-import {EditUserPage, UserPage} from "@/UserPage";
+import { UserPage } from "@/UserPage";
 
 class App extends React.Component {
     constructor(props) {
@@ -33,8 +33,6 @@ class App extends React.Component {
                     <Header/>
                     <PrivateRoute exact path="/" component={HomePage} />
                     <PrivateRoute exact path="/user" roles={[Role.Admin]} component={UserPage}/>
-                    <PrivateRoute path="/user/:id" roles={[Role.Admin]} component={EditUserPage}/>
-                    <PrivateRoute path="/createuser" roles={[Role.Admin]} component={EditUserPage}/>
                     <Route path="/login" component={LoginPage} />
                 </div>
             </Router>

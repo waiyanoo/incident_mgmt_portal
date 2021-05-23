@@ -1,2 +1,2 @@
 export * from './UserPage';
-export * from './EditUserPage';
+export * from './EditUserDialog';
