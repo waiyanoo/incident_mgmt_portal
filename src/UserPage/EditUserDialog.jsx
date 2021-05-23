@@ -61,7 +61,7 @@ class EditUserDialog extends React.Component {
                         <DialogTitle id="form-dialog-title">Create New User</DialogTitle>
                         <DialogContent>
                             <Formik
-                                onSubmit={(values, { setSubmitting }) => {
+                                onSubmit={(values) => {
                                     const data = {id: user.id, fullName: values.fullName, email: values.email, role: values.role, password: values.password};
                                     if(user){
                                         userService.update(data)
