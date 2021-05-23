@@ -18,19 +18,19 @@ function getById(id) {
     return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
 }
 
-function create({fullname, email, role, password}) {
+function create({fullName, email, role, password}) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullname, email, role, password })
+        body: JSON.stringify({ fullName, email, role, password })
     };
     return fetch(`${config.apiUrl}/users`, requestOptions).then(handleResponse);
 }
-function update({id, fullname, email, role, password}) {
+function update({id, fullName, email, role, password}) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullname, email, role, password })
+        body: JSON.stringify({ fullName, email, role, password })
     };
     return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
 }

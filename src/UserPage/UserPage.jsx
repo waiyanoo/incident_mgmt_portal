@@ -76,9 +76,7 @@ class UserPage extends React.Component {
                                     <TableCell align="left">{row.role}</TableCell>
                                     <TableCell align="left">{row.isActive ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="right">
-                                        <IconButton aria-label="delete" onClick={this.editHandler.bind(this, row.id)}>
-                                            <EditIcon />
-                                        </IconButton>
+                                        <EditUserDialog user={row}/>
 
                                     </TableCell>
                                 </TableRow>
