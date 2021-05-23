@@ -7,7 +7,7 @@ import {
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {Alert} from "@material-ui/lab";
-import {incidentService, userService} from "@/_services";
+import {authenticationService, incidentService} from "@/_services";
 
 const INCIDENT_TYPES = [
     { key: 'injury', value: 'Injury'},
@@ -20,13 +20,14 @@ class EditIncidentDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentUser: authenticationService.currentUserValue,
             incident: this.props.incident ? this.props.incident : null,
             users: this.props.users,
             isError: false,
             isCreate: true,
             open: false,
             showSuccess: false,
-            showError: false
+            showError: false,
         };
 
         this.handleClickOpen = this.handleClickOpen.bind(this);
@@ -58,7 +59,7 @@ class EditIncidentDialog extends React.Component {
     }
 
     render() {
-        const { incident, users, open, showSuccess, showError } = this.state;
+        const { currentUser, incident, users, open, showSuccess, showError } = this.state;
         return (
             <div>
                 <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
@@ -81,15 +82,16 @@ class EditIncidentDialog extends React.Component {
                                     rootCaseOfAccident: values.rootCaseOfAccident,
                                     nameOfHandler: values.nameOfHandler};
                                 if(incident){
-                                    // userService.update(data)
-                                    //     .then(response => {
-                                    //         if(response){
-                                    //             this.handleSuccessSnackbarOpen();
-                                    //             this.handleClose();
-                                    //         } else{
-                                    //             this.handleErrorSnackbarOpen();
-                                    //         }
-                                    //     })
+                                    data.id = incident.id;
+                                    incidentService.update(data)
+                                        .then(response => {
+                                            if(response){
+                                                this.handleSuccessSnackbarOpen();
+                                                this.handleClose();
+                                            } else{
+                                                this.handleErrorSnackbarOpen();
+                                            }
+                                        })
                                 } else {
                                     incidentService.create(data)
                                         .then( response => {
@@ -103,14 +105,14 @@ class EditIncidentDialog extends React.Component {
                                 }
                             }}
                             initialValues={{
-                                typeOfIncident : "",
-                                location: "",
-                                datetimeOfIncident: new Date().toISOString().slice(0, 16),
-                                nameOfAffected : "",
-                                nameOfSupervisor: "",
-                                descriptionOfIncident: "",
-                                rootCaseOfAccident: "",
-                                nameOfHandler: ""
+                                typeOfIncident : incident ? incident.typeOfIncident : "",
+                                location: incident ? incident.location : "",
+                                datetimeOfIncident: incident ? incident.datetimeOfIncident : new Date().toISOString().slice(0, 16),
+                                nameOfAffected : incident ? incident.nameOfAffected : "",
+                                nameOfSupervisor: incident ? incident.nameOfSupervisor : "",
+                                descriptionOfIncident: incident ? incident.descriptionOfIncident : "",
+                                rootCaseOfAccident: incident ? incident.rootCaseOfAccident : "",
+                                nameOfHandler: incident ? incident.nameOfHandler : ""
                             }}
                             validationSchema={Yup.object().shape({
                                 typeOfIncident: Yup
@@ -192,6 +194,7 @@ class EditIncidentDialog extends React.Component {
                                                        select fullWidth={true}
                                             >
                                                 {users.map( user => {
+                                                    if(user.id !== currentUser.id )
                                                     return(
                                                         <MenuItem key={user.id} value={user.id}>
                                                             {user.fullName}
