@@ -73,7 +73,7 @@ class EditUserDialog extends React.Component {
                     <DialogTitle id="form-dialog-title">{user ? 'Edit ' : 'Create New '} User</DialogTitle>
                     <DialogContent>
                         <Formik
-                            onSubmit={(values) => {
+                            onSubmit={(values, { setSubmitting }) => {
                                 const data = {
                                     id: '',
                                     fullName: values.fullName,
@@ -81,6 +81,7 @@ class EditUserDialog extends React.Component {
                                     role: values.role,
                                     password: values.password
                                 };
+                                setSubmitting(true);
                                 if (user) {
                                     data.id = user.id;
                                     userService.update(data)
@@ -89,6 +90,7 @@ class EditUserDialog extends React.Component {
                                                 this.handleSuccessSnackbarOpen();
                                                 this.handleClose();
                                             } else {
+                                                setSubmitting(false);
                                                 this.handleErrorSnackbarOpen();
                                             }
                                         })
@@ -99,6 +101,7 @@ class EditUserDialog extends React.Component {
                                                 this.handleSuccessSnackbarOpen();
                                                 this.handleClose();
                                             } else {
+                                                setSubmitting(false);
                                                 this.handleErrorSnackbarOpen();
                                             }
                                         })

@@ -83,7 +83,7 @@ class EditIncidentDialog extends React.Component {
                     <DialogContent>
                         <Formik
 
-                            onSubmit={(values) => {
+                            onSubmit={(values,  { setSubmitting }) => {
                                 const data = {
                                     id: '',
                                     typeOfIncident: values.typeOfIncident,
@@ -95,6 +95,7 @@ class EditIncidentDialog extends React.Component {
                                     rootCaseOfAccident: values.rootCaseOfAccident,
                                     nameOfHandler: values.nameOfHandler
                                 };
+                                setSubmitting(true);
                                 if (incident) {
                                     data.id = incident.id;
                                     incidentService.update(data)
@@ -103,6 +104,7 @@ class EditIncidentDialog extends React.Component {
                                                 this.handleSuccessSnackbarOpen();
                                                 this.handleClose();
                                             } else {
+                                                setSubmitting(false);
                                                 this.handleErrorSnackbarOpen();
                                             }
                                         })
@@ -113,6 +115,7 @@ class EditIncidentDialog extends React.Component {
                                                 this.handleSuccessSnackbarOpen();
                                                 this.handleClose();
                                             } else {
+                                                setSubmitting(false);
                                                 this.handleErrorSnackbarOpen();
                                             }
                                         })

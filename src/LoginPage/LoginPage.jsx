@@ -1,8 +1,10 @@
 import React from 'react';
-import {authenticationService} from '@/_services';
-import {Button, Card, CardContent, CircularProgress, Grid, TextField} from "@material-ui/core";
+import {authenticationService, incidentService} from '@/_services';
+import {Button, Card, CardContent, CircularProgress, DialogActions, Grid, TextField} from "@material-ui/core";
 import {Alert} from "@material-ui/lab";
 import {green} from "@material-ui/core/colors";
+import * as Yup from "yup";
+import {Formik} from "formik";
 
 const styles = {
     cardStyle: {
@@ -31,42 +33,12 @@ class LoginPage extends React.Component {
         }
 
         this.state = {
-            username: '',
-            password: '',
-            submitted: false,
             isError: false
         };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(e) {
-        const {name, value} = e.target;
-        this.setState({[name]: value});
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-
-        this.setState({submitted: true});
-        const {username, password} = this.state;
-        authenticationService.login(username, password)
-            .then(
-                () => {
-                    const {from} = this.props.location.state || {from: {pathname: "/"}};
-                    this.props.history.push(from);
-                },
-                _error => {
-                    this.setState({password: '', isError: true})
-                }
-            );
-
     }
 
     render() {
-        const {loggingIn} = this.props;
-        const {username, password, submitted, isError} = this.state;
+        const { isError} = this.state;
         return (
             <div>
                 <Grid
@@ -78,35 +50,74 @@ class LoginPage extends React.Component {
                     <Card style={styles.cardStyle}>
                         <CardContent>
                             <h2>Login</h2>
-                            <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
-                                <Grid
-                                    container
-                                    direction="column"
-                                    justify="center"
-                                    alignItems="stretch"
-                                >
-                                    <TextField label="Email" name="username" value={username}
-                                               onChange={this.handleChange}
-                                               type="email" variant="outlined"
-                                               error={submitted && !username}
-                                               helperText={submitted && !username ? 'Email is required' : ' '}
-                                    />
-                                    <TextField label="Password" name="password" value={password}
-                                               onChange={this.handleChange}
-                                               type="password" variant="outlined"
-                                               error={submitted && !password}
-                                               helperText={submitted && !password ? 'Password is required' : ' '}
-                                    />
-                                    <Button variant="contained" type="submit" color="primary">
-                                        Login
-                                    </Button>
-                                    {loggingIn && <CircularProgress size={24} className={styles.buttonProgress}/>
-                                    }
-                                    {isError &&
-                                    <Alert style={styles.alertPadding} severity="error">Email or password is
-                                        incorrect!</Alert>}
-                                </Grid>
-                            </form>
+                            <Formik
+                                onSubmit={(values, { setSubmitting }) => {
+                                    setSubmitting(true)
+                                    authenticationService.login(values.email, values.password)
+                                        .then(
+                                            () => {
+                                                const {from} = this.props.location.state || {from: {pathname: "/"}};
+                                                this.props.history.push(from);
+                                            },
+                                            _error => {
+                                                setSubmitting(false);
+                                                this.setState({isError: true})
+                                            }
+                                        );
+
+                                }}
+                                initialValues={{
+                                    email: '',
+                                    password: ''
+                                }}
+                                validationSchema={Yup.object().shape({
+                                    email: Yup
+                                        .string('Enter username')
+                                        .email('Enter a valid email')
+                                        .required('Username is required'),
+                                    password: Yup
+                                        .string('Enter password')
+                                        .required('Password is required')
+                                })}
+                            >
+                                {props => {
+                                    const {
+                                        values, touched, errors, isSubmitting, handleChange, handleSubmit
+                                    } = props;
+                                    return (
+                                        <form onSubmit={handleSubmit}>
+                                            <Grid
+                                                container
+                                                direction="column"
+                                                justify="center"
+                                                alignItems="stretch"
+                                            >
+                                                <TextField label="Email" name="email" value={values.email}
+                                                           onChange={handleChange}
+                                                           type="text" variant="outlined"
+                                                           error={errors.email && touched.email}
+                                                           helperText={errors.email && touched.email ? 'Email is invalid' : ' '}
+                                                />
+                                                <TextField label="Password" name="password" value={values.password}
+                                                           onChange={handleChange}
+                                                           type="password" variant="outlined"
+                                                           error={errors.password && touched.password}
+                                                           helperText={errors.password && touched.password ? errors.password.me : ' '}
+                                                />
+                                                <Button type="submit" variant="outlined" color="primary"
+                                                        disabled={isSubmitting}>LOGIN</Button>
+                                                {isSubmitting && <CircularProgress size={24} className={styles.buttonProgress}/>
+                                                }
+                                                {isError &&
+                                                <Alert style={styles.alertPadding} severity="error">Email or password is
+                                                    incorrect!</Alert>}
+                                            </Grid>
+
+
+                                        </form>
+                                    )
+                                }}
+                            </Formik>
                         </CardContent>
                     </Card>
                 </Grid>

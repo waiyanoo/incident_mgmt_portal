@@ -84,14 +84,15 @@ class ResolveIncidentDialog extends React.Component {
                     <DialogTitle id="form-dialog-title"> Acknowledge Incident</DialogTitle>
                     <DialogContent>
                         <Formik
-                            onSubmit={(values) => {
-
+                            onSubmit={(values, { setSubmitting }) => {
+                                setSubmitting(true)
                                 incidentService.resolve({id: incident.id, comment: values.comment})
                                     .then(response => {
                                         if (response) {
                                             this.handleSuccessSnackbarOpen();
                                             this.handleClose();
                                         } else {
+                                            setSubmitting(false);
                                             this.handleErrorSnackbarOpen();
                                         }
                                     })
