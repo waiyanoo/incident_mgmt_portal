@@ -87,6 +87,7 @@ class EditUserDialog extends React.Component {
                                     userService.update(data)
                                         .then(response => {
                                             if (response) {
+                                                this.setState({user: response.data});
                                                 this.handleSuccessSnackbarOpen();
                                                 this.handleClose();
                                             } else {

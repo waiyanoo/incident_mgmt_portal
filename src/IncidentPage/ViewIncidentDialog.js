@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography} from "@material-ui/core";
 import Moment from 'react-moment';
+import {incidentService} from "@/_services";
 
 class ViewIncidentDialog extends React.Component {
     constructor(props) {
@@ -16,8 +17,15 @@ class ViewIncidentDialog extends React.Component {
         this.handleClose = this.handleClose.bind(this);
     }
 
+    componentDidMount() {
+
+    }
+
     handleClickOpen() {
+        const {incident} = this.state;
+        incidentService.getById(incident.id).then(incident => this.setState({incident: incident.data}));
         this.setState({open: true});
+
     };
 
     handleClose() {

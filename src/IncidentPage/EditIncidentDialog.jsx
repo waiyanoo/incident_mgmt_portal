@@ -49,7 +49,7 @@ class EditIncidentDialog extends React.Component {
 
     handleClose() {
         this.props.callbackModal();
-        this.setState({open: false});
+        this.setState({ open: false });
     };
 
     handleSuccessSnackbarOpen() {
@@ -95,6 +95,7 @@ class EditIncidentDialog extends React.Component {
                                     incidentService.update(data)
                                         .then(response => {
                                             if (response) {
+                                                this.setState({incident: response.data});
                                                 this.handleSuccessSnackbarOpen();
                                                 this.handleClose();
                                             } else {
