@@ -87,13 +87,13 @@ class LoginPage extends React.Component {
                                 >
                                     <TextField label="Email" name="username" value={username}
                                                onChange={this.handleChange}
-                                               type="email"
+                                               type="email" variant="outlined"
                                                error={submitted && !username}
                                                helperText={submitted && !username ? 'Email is required' : ' '}
                                     />
                                     <TextField label="Password" name="password" value={password}
                                                onChange={this.handleChange}
-                                               type="password"
+                                               type="password" variant="outlined"
                                                error={submitted && !password}
                                                helperText={submitted && !password ? 'Password is required' : ' '}
                                     />

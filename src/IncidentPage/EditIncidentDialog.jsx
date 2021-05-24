@@ -22,13 +22,19 @@ const INCIDENT_TYPES = [
     {key: 'theft', value: 'Theft'}
 ]
 
+const styles = {
+    dialogAction: {
+        paddingRight: 0
+    }
+}
+
 class EditIncidentDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             currentUser: authenticationService.currentUserValue,
             incident: this.props.incident ? this.props.incident : null,
-            users: this.props.users,
+            users: this.props.users ? this.props.users : [],
             isError: false,
             isCreate: true,
             open: false,
@@ -161,7 +167,7 @@ class EditIncidentDialog extends React.Component {
                                         >
                                             <TextField label="Type of incident" name="typeOfIncident"
                                                        value={values.typeOfIncident} onChange={handleChange}
-                                                       select fullWidth={true}
+                                                       select fullWidth={true} variant="outlined"
                                                        error={errors.typeOfIncident && touched.typeOfIncident}
                                                        helperText={errors.typeOfIncident && touched.typeOfIncident ? 'Incident type is required' : ' '}
                                             >
@@ -173,42 +179,43 @@ class EditIncidentDialog extends React.Component {
                                                 })}
                                             </TextField>
                                             <TextField label="Location" name="location" value={values.location}
-                                                       onChange={handleChange}
+                                                       onChange={handleChange} variant="outlined"
                                                        type="text" fullWidth={true} multiline rows={3} rowsMax={3}
                                                        error={errors.location && touched.location}
                                                        helperText={errors.location && touched.location ? 'Location is required' : ' '}
                                             />
                                             <TextField label="Datetime of Incident" value={values.datetimeOfIncident}
-                                                       onChange={handleChange}
+                                                       onChange={handleChange} variant="outlined"
                                                        ttype="date" fullWidth={true}
                                                        error={errors.datetimeOfIncident && touched.datetimeOfIncident}
                                                        helperText={errors.datetimeOfIncident && touched.datetimeOfIncident ? 'Datetime is required' : ' '}
                                             />
                                             <TextField label="Affected Person Name" name="nameOfAffected"
                                                        value={values.nameOfAffected} onChange={handleChange}
-                                                       type="text" fullWidth={true}
+                                                       type="text" fullWidth={true} variant="outlined"
                                                        error={errors.nameOfAffected && touched.nameOfAffected}
                                                        helperText={errors.nameOfAffected && touched.nameOfAffected ? 'Affected Person Name is required' : ' '}
                                             />
                                             <TextField label="Supervisor Name" name="nameOfSupervisor"
                                                        value={values.nameOfSupervisor} onChange={handleChange}
-                                                       type="text" fullWidth={true}
+                                                       type="text" fullWidth={true} variant="outlined"
                                                        error={errors.nameOfSupervisor && touched.nameOfSupervisor}
                                                        helperText={errors.nameOfSupervisor && touched.nameOfSupervisor ? 'Supervisor Name is required' : ' '}
                                             />
                                             <TextField label="Root Cause" name="rootCaseOfAccident"
                                                        value={values.rootCaseOfAccident} onChange={handleChange}
-                                                       fullWidth={true} multiline rows={3} rowsMax={3}
+                                                       fullWidth={true} multiline rows={3} rowsMax={3} variant="outlined"
                                                        error={errors.rootCaseOfAccident && touched.rootCaseOfAccident}
                                                        helperText={errors.rootCaseOfAccident && touched.rootCaseOfAccident ? 'Rootcase is required' : ' '}
                                             />
                                             <TextField label="Description" name="descriptionOfIncident"
                                                        value={values.descriptionOfIncident} onChange={handleChange}
-                                                       fullWidth={true} multiline rows={3} rowsMax={3}
+                                                       fullWidth={true} multiline rows={3} rowsMax={3} variant="outlined"
                                             />
+                                            <br/>
                                             <TextField label="Name of Handler" name="nameOfHandler"
                                                        value={values.nameOfHandler} onChange={handleChange}
-                                                       select fullWidth={true}
+                                                       select fullWidth={true} variant="outlined"
                                             >
                                                 {users.map(user => {
                                                     if (user.id !== currentUser.id)
@@ -219,7 +226,7 @@ class EditIncidentDialog extends React.Component {
                                                 })}
                                             </TextField>
                                         </Grid>
-                                        <DialogActions>
+                                        <DialogActions style={styles.dialogAction}>
                                             <Button type="button" onClick={this.handleClose}>cancel</Button>
                                             <Button type="submit" variant="outlined" color="primary"
                                                     disabled={isSubmitting}>Save</Button>

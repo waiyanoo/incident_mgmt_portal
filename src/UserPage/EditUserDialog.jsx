@@ -15,6 +15,12 @@ import * as Yup from 'yup';
 import {userService} from "@/_services";
 import {Alert} from "@material-ui/lab";
 
+const styles = {
+    dialogAction: {
+        paddingRight: 0
+    }
+}
+
 class EditUserDialog extends React.Component {
     constructor(props) {
         super(props);
@@ -135,19 +141,19 @@ class EditUserDialog extends React.Component {
                                         >
                                             <TextField label="Full Name" name="fullName" value={values.fullName}
                                                        onChange={handleChange}
-                                                       type="text" fullWidth={true}
+                                                       type="text" fullWidth={true} variant="outlined"
                                                        error={errors.fullName && touched.fullName}
                                                        helperText={errors.fullName && touched.fullName ? 'Name is required' : ' '}
                                             />
                                             <TextField label="Email" name="email" value={values.email}
                                                        onChange={handleChange}
-                                                       type="text" fullWidth={true}
+                                                       type="text" fullWidth={true} variant="outlined"
                                                        error={errors.email && touched.email}
                                                        helperText={errors.email && touched.email ? 'Email is required' : ' '}
                                             />
                                             <TextField label="Role" name="role" value={values.role}
                                                        onChange={handleChange}
-                                                       select fullWidth={true}
+                                                       select fullWidth={true} variant="outlined"
                                                        error={errors.role && touched.role}
                                                        helperText={errors.role && touched.role ? 'Email is required' : ' '}
                                             >
@@ -161,12 +167,12 @@ class EditUserDialog extends React.Component {
                                             {!user &&
                                             <TextField label="Password" name="password" value={values.password}
                                                        onChange={handleChange}
-                                                       type="password" fullWidth={true}
+                                                       type="password" fullWidth={true} variant="outlined"
                                                        error={errors.password && touched.password}
                                                        helperText={errors.password && touched.password ? 'Password is required' : ' '}
                                             />}
                                         </Grid>
-                                        <DialogActions>
+                                        <DialogActions style={styles.dialogAction}>
                                             <Button type="button" onClick={this.handleClose}>cancel</Button>
                                             <Button type="submit" variant="outlined" color="primary"
                                                     disabled={isSubmitting}>Save</Button>

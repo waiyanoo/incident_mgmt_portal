@@ -32,7 +32,7 @@ class UserPage extends React.Component {
     }
 
     retrieveUsers() {
-        userService.getAll().then(users => this.setState({users}));
+        userService.getAll().then(users => this.setState({users: users.data}));
     }
 
     render() {

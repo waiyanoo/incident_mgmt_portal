@@ -34,9 +34,9 @@ class IncidentPage extends React.Component {
 
     componentDidMount() {
         const {currentUser} = this.state;
-        userService.getById(currentUser.id).then(userFromApi => this.setState({userFromApi}));
+        userService.getById(currentUser.id).then(userFromApi => this.setState({userFromApi: userFromApi.data}));
         if (currentUser.role === 'Admin') {
-            userService.getAll().then(users => this.setState({users}));
+            userService.getAll().then(users => this.setState({users: users.data}));
         }
         this.retrieveIncidents();
     }
@@ -70,7 +70,7 @@ class IncidentPage extends React.Component {
                     alignItems="center"
                 >
                     <h2>Incident</h2>
-                    {currentUser.role === 'Admin' &&
+                    {currentUser.role === 'Admin' && users &&
                     <EditIncidentDialog users={users} callbackModal={this.callbackModal}/>}
                 </Grid>
 

@@ -6,14 +6,19 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
-    MenuItem,
     Snackbar,
     TextField
 } from "@material-ui/core";
-import {incidentService, userService} from "@/_services";
+import {incidentService} from "@/_services";
 import {Alert} from "@material-ui/lab";
 import * as Yup from "yup";
 import {Formik} from "formik";
+
+const styles = {
+    dialogAction: {
+        paddingRight: 0
+    }
+}
 
 class ResolveIncidentDialog extends React.Component {
     constructor(props) {
@@ -114,14 +119,14 @@ class ResolveIncidentDialog extends React.Component {
                                         >
                                             <TextField label="Comment" name="comment" value={values.comment}
                                                        onChange={handleChange}
-                                                       multiline
+                                                       multiline variant="outlined"
                                                        rows={4} fullWidth={true}
                                                        error={errors.comment && touched.comment}
                                                        helperText={errors.comment && touched.comment ? 'Comment is required' : ' '}
                                             />
 
                                         </Grid>
-                                        <DialogActions>
+                                        <DialogActions style={styles.dialogAction}>
                                             <Button type="button" onClick={this.handleClose}>cancel</Button>
                                             <Button type="submit" variant="outlined" color="primary"
                                                     disabled={isSubmitting}>Resolve</Button>
