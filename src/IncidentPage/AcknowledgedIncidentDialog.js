@@ -60,7 +60,7 @@ class AcknowledgedIncidentDialog extends React.Component {
         const {open, showSuccess, showError} = this.state;
         return (
             <div>
-                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
                     Acknowledge
                 </Button>
                 <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>

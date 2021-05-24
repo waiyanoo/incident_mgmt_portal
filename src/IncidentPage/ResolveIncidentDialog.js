@@ -77,11 +77,11 @@ class ResolveIncidentDialog extends React.Component {
         const {open,incident, showSuccess, showError} = this.state;
         return (
             <div>
-                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
                     Resolve
                 </Button>
                 <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
-                    <DialogTitle id="form-dialog-title"> Acknowledge Incident</DialogTitle>
+                    <DialogTitle id="form-dialog-title"> Resolve Incident</DialogTitle>
                     <DialogContent>
                         <Formik
                             onSubmit={(values, { setSubmitting }) => {

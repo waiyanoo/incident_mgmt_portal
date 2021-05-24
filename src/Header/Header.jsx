@@ -3,7 +3,7 @@ import {AppBar, Container, List, ListItem, ListItemText, withStyles} from "@mate
 import {authenticationService} from "@/_services";
 import {Role} from "@/_helpers";
 
-const styles = (theme) => ({
+const styles = () => ({
     navbarDisplayFlex: {
         display: `flex`,
         justifyContent: `space-between`

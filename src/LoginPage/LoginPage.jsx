@@ -38,7 +38,7 @@ class LoginPage extends React.Component {
     }
 
     render() {
-        const { isError} = this.state;
+        const { isError } = this.state;
         return (
             <div>
                 <Grid

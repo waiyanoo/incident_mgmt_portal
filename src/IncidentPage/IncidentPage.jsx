@@ -15,6 +15,20 @@ import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
 import {Alert} from "@material-ui/lab";
 import AcknowledgedIncidentDialog from "@/IncidentPage/AcknowledgedIncidentDialog";
 import ResolveIncidentDialog from "@/IncidentPage/ResolveIncidentDialog";
+import ViewIncidentDialog from "@/IncidentPage/ViewIncidentDialog";
+
+const INCIDENT_TYPES = [
+    {key: 'injury', value: 'Injury'},
+    {key: 'near_miss', value: 'Near Miss'},
+    {key: 'property_damage', value: 'Property Damage'},
+    {key: 'theft', value: 'Theft'}
+]
+
+const styles = {
+    grid : {
+        marginLeft: 5
+    }
+}
 
 class IncidentPage extends React.Component {
     constructor(props) {
@@ -71,7 +85,7 @@ class IncidentPage extends React.Component {
                 >
                     <h2>Incident</h2>
                     {currentUser.role === 'Admin' && users &&
-                    <EditIncidentDialog users={users} callbackModal={this.callbackModal}/>}
+                    <EditIncidentDialog users={users} incidentTypes={INCIDENT_TYPES} callbackModal={this.callbackModal}/>}
                 </Grid>
 
                 {incidents.length > 0 &&
@@ -92,7 +106,7 @@ class IncidentPage extends React.Component {
                             {incidents.map((row) => (
                                 <TableRow key={row.id}>
                                     <TableCell component="th" scope="row">
-                                        {row.typeOfIncident}
+                                        {INCIDENT_TYPES.find(i => i.key === row.typeOfIncident).value}
                                     </TableCell>
                                     <TableCell align="left">{row.datetimeOfIncident}</TableCell>
                                     <TableCell align="left">{row.location}</TableCell>
@@ -100,15 +114,28 @@ class IncidentPage extends React.Component {
                                     <TableCell align="left">{row.isAcknowledged ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="left">{row.isResolved  ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="right">
-                                        {row.nameOfHandler === '' && currentUser.role === 'Admin' &&
-                                        <EditIncidentDialog users={users} incident={row}
-                                                            callbackModal={this.callbackModal}/>}
-                                        {row.nameOfHandler !== '' &&
-                                        !row.isAcknowledged &&
-                                        row.nameOfHandler === currentUser.id &&
-                                        <AcknowledgedIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
-                                        {!row.isResolved && row.nameOfHandler === currentUser.id &&
-                                            <ResolveIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
+                                        <Grid
+                                            container
+                                            direction="row"
+                                            justify="flex-end"
+                                            alignItems="center"
+                                        >
+                                            <Grid item>
+                                                <ViewIncidentDialog incident={row} incidentTypes={INCIDENT_TYPES} users={currentUser.role === 'Admin' ? users : [currentUser]}/>
+                                            </Grid>
+                                            <Grid item style={styles.grid}>
+                                                {row.nameOfHandler === '' && currentUser.role === 'Admin' &&
+                                                <EditIncidentDialog users={users} incident={row} incidentTypes={INCIDENT_TYPES}
+                                                                    callbackModal={this.callbackModal}/>}
+                                                {!row.isResolved &&
+                                                !row.isAcknowledged &&
+                                                row.nameOfHandler === currentUser.id &&
+                                                <AcknowledgedIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
+                                                {!row.isResolved && row.isAcknowledged && row.nameOfHandler === currentUser.id &&
+                                                <ResolveIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
+                                            </Grid>
+
+                                        </Grid>
                                     </TableCell>
                                 </TableRow>
                             ))}

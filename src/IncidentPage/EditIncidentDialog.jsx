@@ -15,13 +15,6 @@ import * as Yup from 'yup';
 import {Alert} from "@material-ui/lab";
 import {authenticationService, incidentService} from "@/_services";
 
-const INCIDENT_TYPES = [
-    {key: 'injury', value: 'Injury'},
-    {key: 'near_miss', value: 'Near Miss'},
-    {key: 'property_damage', value: 'Property Damage'},
-    {key: 'theft', value: 'Theft'}
-]
-
 const styles = {
     dialogAction: {
         paddingRight: 0
@@ -34,6 +27,7 @@ class EditIncidentDialog extends React.Component {
         this.state = {
             currentUser: authenticationService.currentUserValue,
             incident: this.props.incident ? this.props.incident : null,
+            incidentTypes: this.props.incidentTypes,
             users: this.props.users ? this.props.users : [],
             isError: false,
             isCreate: true,
@@ -71,10 +65,10 @@ class EditIncidentDialog extends React.Component {
     }
 
     render() {
-        const {currentUser, incident, users, open, showSuccess, showError} = this.state;
+        const {currentUser, incident, incidentTypes, users, open, showSuccess, showError} = this.state;
         return (
             <div>
-                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
                     {incident ? 'Edit' : 'Create New Incident'}
                 </Button>
 
@@ -182,7 +176,7 @@ class EditIncidentDialog extends React.Component {
                                                        error={errors.typeOfIncident && touched.typeOfIncident}
                                                        helperText={errors.typeOfIncident && touched.typeOfIncident ? 'Incident type is required' : ' '}
                                             >
-                                                {INCIDENT_TYPES.map(type => {
+                                                {incidentTypes.map(type => {
                                                     return (
                                                         <MenuItem key={type.key} value={type.key}>
                                                             {type.value}
