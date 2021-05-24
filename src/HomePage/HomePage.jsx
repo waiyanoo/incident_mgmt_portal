@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { userService, authenticationService } from '@/_services';
+import {authenticationService, userService} from '@/_services';
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -13,12 +13,12 @@ class HomePage extends React.Component {
     }
 
     componentDidMount() {
-        const { currentUser } = this.state;
-        userService.getById(currentUser.id).then(userFromApi => this.setState({ userFromApi }));
+        const {currentUser} = this.state;
+        userService.getById(currentUser.id).then(userFromApi => this.setState({userFromApi}));
     }
 
     render() {
-        const { currentUser, userFromApi } = this.state;
+        const {currentUser, userFromApi} = this.state;
         return (
             <div>
                 <h1>Home</h1>
@@ -28,9 +28,9 @@ class HomePage extends React.Component {
                 <div>
                     Current user from secure api end point:
                     {userFromApi &&
-                        <ul>
-                            <li>{userFromApi.fullName}</li>
-                        </ul>
+                    <ul>
+                        <li>{userFromApi.fullName}</li>
+                    </ul>
                     }
                 </div>
             </div>
@@ -38,4 +38,4 @@ class HomePage extends React.Component {
     }
 }
 
-export { HomePage };
+export {HomePage};

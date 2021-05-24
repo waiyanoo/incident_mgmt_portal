@@ -39,9 +39,10 @@ class Header extends React.Component {
     logout() {
         authenticationService.logout();
     }
+
     render() {
-        const { classes } = this.props;
-        const { currentUser, isAdmin } = this.state;
+        const {classes} = this.props;
+        const {currentUser, isAdmin} = this.state;
         return (
             <div>
                 {currentUser &&
@@ -51,6 +52,11 @@ class Header extends React.Component {
                             <a href={'/'} key={'Home'} className={classes.linkText}>
                                 <ListItem button>
                                     <ListItemText primary={'home'}/>
+                                </ListItem>
+                            </a>
+                            <a href={'/incident'} key={'Incident'} className={classes.linkText}>
+                                <ListItem button>
+                                    <ListItemText primary={'incident'}/>
                                 </ListItem>
                             </a>
                             {isAdmin && <a href={'/user'} key={'user'} className={classes.linkText}>
