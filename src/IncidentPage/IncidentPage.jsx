@@ -14,6 +14,7 @@ import {
 import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
 import {Alert} from "@material-ui/lab";
 import AcknowledgedIncidentDialog from "@/IncidentPage/AcknowledgedIncidentDialog";
+import ResolveIncidentDialog from "@/IncidentPage/ResolveIncidentDialog";
 
 class IncidentPage extends React.Component {
     constructor(props) {
@@ -96,8 +97,8 @@ class IncidentPage extends React.Component {
                                     <TableCell align="left">{row.datetimeOfIncident}</TableCell>
                                     <TableCell align="left">{row.location}</TableCell>
                                     <TableCell align="left">{this.getUserName(row.nameOfHandler)}</TableCell>
-                                    <TableCell align="left">{row.isAcknowledged ? 'Yes' : 'No'}</TableCell>
-                                    <TableCell align="left">{row.isResolved ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell align="left">{row.isAcknowledged === 'true' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell align="left">{row.isResolved === 'true' ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="right">
                                         {row.nameOfHandler === '' && currentUser.role === 'Admin' &&
                                         <EditIncidentDialog users={users} incident={row}
@@ -106,6 +107,8 @@ class IncidentPage extends React.Component {
                                         row.isAcknowledged === 'false' &&
                                         row.nameOfHandler === currentUser.id &&
                                         <AcknowledgedIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
+                                        {row.isResolved === 'false' && row.nameOfHandler === currentUser.id &&
+                                            <ResolveIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
                                     </TableCell>
                                 </TableRow>
                             ))}

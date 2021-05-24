@@ -174,7 +174,7 @@ class EditIncidentDialog extends React.Component {
                                             </TextField>
                                             <TextField label="Location" name="location" value={values.location}
                                                        onChange={handleChange}
-                                                       type="text" fullWidth={true} multiline rowsMax={3}
+                                                       type="text" fullWidth={true} multiline rows={3} rowsMax={3}
                                                        error={errors.location && touched.location}
                                                        helperText={errors.location && touched.location ? 'Location is required' : ' '}
                                             />
@@ -198,13 +198,13 @@ class EditIncidentDialog extends React.Component {
                                             />
                                             <TextField label="Root Cause" name="rootCaseOfAccident"
                                                        value={values.rootCaseOfAccident} onChange={handleChange}
-                                                       type="text" fullWidth={true} multiline rowsMax={3}
+                                                       fullWidth={true} multiline rows={3} rowsMax={3}
                                                        error={errors.rootCaseOfAccident && touched.rootCaseOfAccident}
                                                        helperText={errors.rootCaseOfAccident && touched.rootCaseOfAccident ? 'Rootcase is required' : ' '}
                                             />
                                             <TextField label="Description" name="descriptionOfIncident"
                                                        value={values.descriptionOfIncident} onChange={handleChange}
-                                                       fullWidth={true} multiline rowsMax={3}
+                                                       fullWidth={true} multiline rows={3} rowsMax={3}
                                             />
                                             <TextField label="Name of Handler" name="nameOfHandler"
                                                        value={values.nameOfHandler} onChange={handleChange}

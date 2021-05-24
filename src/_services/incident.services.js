@@ -6,7 +6,8 @@ export const incidentService = {
     update,
     getAll,
     getById,
-    acknowledge
+    acknowledge,
+    resolve
 };
 
 function getAll() {
@@ -43,4 +44,12 @@ function acknowledge(id) {
         body: JSON.stringify({})
     };
     return fetch(`${config.apiUrl}/incidents/${id}/acknowledge`, requestOptions).then(handleResponse);
+}
+function resolve({id, comment}) {
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({comment})
+    };
+    return fetch(`${config.apiUrl}/incidents/${id}/resolve`, requestOptions).then(handleResponse);
 }
