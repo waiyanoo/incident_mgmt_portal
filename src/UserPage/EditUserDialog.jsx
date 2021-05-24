@@ -94,6 +94,10 @@ class EditUserDialog extends React.Component {
                                                 this.handleErrorSnackbarOpen();
                                             }
                                         })
+                                        .catch(() => {
+                                            this.handleErrorSnackbarOpen();
+                                            setSubmitting(false);
+                                        })
                                 } else {
                                     userService.create(data)
                                         .then(response => {
@@ -104,6 +108,10 @@ class EditUserDialog extends React.Component {
                                                 setSubmitting(false);
                                                 this.handleErrorSnackbarOpen();
                                             }
+                                        })
+                                        .catch(() => {
+                                            this.handleErrorSnackbarOpen();
+                                            setSubmitting(false);
                                         })
                                 }
                             }}
@@ -172,7 +180,7 @@ class EditUserDialog extends React.Component {
                                                        onChange={handleChange}
                                                        type="password" fullWidth={true} variant="outlined"
                                                        error={errors.password && touched.password}
-                                                       helperText={errors.password && touched.password ? 'Password is required' : ' '}
+                                                       helperText={errors.password && touched.password ? 'Password is invalid' : ' '}
                                             />}
                                         </Grid>
                                         <DialogActions style={styles.dialogAction}>

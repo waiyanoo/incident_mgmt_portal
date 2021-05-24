@@ -96,6 +96,10 @@ class ResolveIncidentDialog extends React.Component {
                                             this.handleErrorSnackbarOpen();
                                         }
                                     })
+                                    .catch(() => {
+                                        this.handleErrorSnackbarOpen();
+                                        setSubmitting(false);
+                                    })
                             }}
                             initialValues={{
                                 comment: ''

@@ -108,6 +108,10 @@ class EditIncidentDialog extends React.Component {
                                                 this.handleErrorSnackbarOpen();
                                             }
                                         })
+                                        .catch(() => {
+                                            this.handleErrorSnackbarOpen();
+                                            setSubmitting(false);
+                                        })
                                 } else {
                                     incidentService.create(data)
                                         .then(response => {
@@ -118,6 +122,10 @@ class EditIncidentDialog extends React.Component {
                                                 setSubmitting(false);
                                                 this.handleErrorSnackbarOpen();
                                             }
+                                        })
+                                        .catch(() => {
+                                            this.handleErrorSnackbarOpen();
+                                            setSubmitting(false);
                                         })
                                 }
                             }}
