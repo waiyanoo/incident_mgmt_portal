@@ -240,7 +240,7 @@ class IncidentPage extends React.Component {
                                     <TableCell component="th" scope="row">
                                         {INCIDENT_TYPES.find(i => i.key === row.typeOfIncident).value}
                                     </TableCell>
-                                    <TableCell align="left">{row.datetimeOfIncident}</TableCell>
+                                    <TableCell align="left"><Moment format="YYYY-MM-DD HH:mm">{row.datetimeOfIncident}</Moment></TableCell>
                                     <TableCell align="left">{row.location}</TableCell>
                                     <TableCell align="left">{this.getUserName(row.nameOfHandler)}</TableCell>
                                     <TableCell align="left">{row.isAcknowledged ? 'Yes' : 'No'}</TableCell>

@@ -10,6 +10,10 @@ import {
     Snackbar,
     TextField
 } from "@material-ui/core";
+import {DatePicker, DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+
+// pick a date util library
+import MomentUtils from '@date-io/moment';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {Alert} from "@material-ui/lab";
@@ -71,12 +75,11 @@ class EditIncidentDialog extends React.Component {
                 <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
                     {incident ? 'Edit' : 'Create New Incident'}
                 </Button>
-
-                <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title">{incident ? 'Edit ' : 'Create New '}Incident</DialogTitle>
                     <DialogContent>
                         <Formik
-
                             onSubmit={(values,  { setSubmitting }) => {
                                 const data = {
                                     id: '',
@@ -127,7 +130,7 @@ class EditIncidentDialog extends React.Component {
                             initialValues={{
                                 typeOfIncident: incident ? incident.typeOfIncident : "",
                                 location: incident ? incident.location : "",
-                                datetimeOfIncident: incident ? incident.datetimeOfIncident : new Date().toISOString().slice(0, 16),
+                                datetimeOfIncident: incident ? incident.datetimeOfIncident : new Date(),
                                 nameOfAffected: incident ? incident.nameOfAffected : "",
                                 nameOfSupervisor: incident ? incident.nameOfSupervisor : "",
                                 descriptionOfIncident: incident ? incident.descriptionOfIncident : "",
@@ -161,7 +164,7 @@ class EditIncidentDialog extends React.Component {
                         >
                             {props => {
                                 const {
-                                    values, touched, errors, isSubmitting, handleChange, handleSubmit
+                                    values, touched, errors, isSubmitting, handleChange, handleSubmit, setFieldValue
                                 } = props;
                                 return (
                                     <form onSubmit={handleSubmit}>
@@ -190,12 +193,13 @@ class EditIncidentDialog extends React.Component {
                                                        error={errors.location && touched.location}
                                                        helperText={errors.location && touched.location ? 'Location is required' : ' '}
                                             />
-                                            <TextField label="Datetime of Incident" value={values.datetimeOfIncident}
-                                                       onChange={handleChange} variant="outlined"
-                                                       ttype="date" fullWidth={true}
-                                                       error={errors.datetimeOfIncident && touched.datetimeOfIncident}
-                                                       helperText={errors.datetimeOfIncident && touched.datetimeOfIncident ? 'Datetime is required' : ' '}
-                                            />
+                                            <DateTimePicker label="Datetime of Incident"
+                                                            value={values.datetimeOfIncident}
+                                                            style={{marginBottom: 20}}
+                                                            fullWidth={true}
+                                                            inputVariant="outlined"
+                                                            format="YYYY-MM-DD HH:mm"
+                                                            onChange={date => setFieldValue('datetimeOfIncident', date)}/>
                                             <TextField label="Affected Person Name" name="nameOfAffected"
                                                        value={values.nameOfAffected} onChange={handleChange}
                                                        type="text" fullWidth={true} variant="outlined"
@@ -243,6 +247,7 @@ class EditIncidentDialog extends React.Component {
                         </Formik>
                     </DialogContent>
                 </Dialog>
+                </MuiPickersUtilsProvider>
                 <Snackbar open={showSuccess} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
                     <Alert onClose={this.handlSnackbarClose} severity="success">
                         {incident ? 'Incident successfully updated.' : 'Incident successfully created.'}
