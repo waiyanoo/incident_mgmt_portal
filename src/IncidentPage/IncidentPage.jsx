@@ -8,8 +8,8 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableContainer,
-    TableHead,
+    TableContainer, TableFooter,
+    TableHead, TablePagination,
     TableRow, TextField
 } from "@material-ui/core";
 import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
@@ -80,12 +80,16 @@ class IncidentPage extends React.Component {
             users: null,
             sorting: 'sort[tsModified]=desc',
             filter: [],
-            filterQuery: null
+            filterQuery: null,
+            rowsPerPage: 5,
+            page: 0
         };
 
         this.callbackModal = this.callbackModal.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.filterHandleChange = this.filterHandleChange.bind(this);
+        this.handleChangePage = this.handleChangePage.bind(this);
+        this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     }
 
     componentDidMount() {
@@ -102,8 +106,7 @@ class IncidentPage extends React.Component {
     }
 
     retrieveIncidents() {
-        const {sorting} = this.state;
-        incidentService.getAll(sorting).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+        this.retrieveAllIncident();
     }
 
     getUserName(id) {
@@ -117,28 +120,45 @@ class IncidentPage extends React.Component {
     }
 
     handleChange(e) {
-        const {filterQuery} = this.state
         this.setState({ sorting: e.target.value });
-        this.props.history.push({
-            pathname: '/incident',
-            search: `?${e.target.value}`
-        });
-        incidentService.getAll(e.target.value, filterQuery).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+        // this.props.history.push({
+        //     pathname: '/incident',
+        //     search: `?${e.target.value}`
+        // });
+        const { filterQuery, rowsPerPage, page} = this.state;
+        incidentService.getAll(e.target.value, filterQuery, rowsPerPage, page).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
     }
 
     filterHandleChange(e){
-        const {sorting} = this.state;
         const  options  = e.target.value;
         let filter = '';
         options.map(option => {
             filter += `&filter[typeOfIncident]=${option}`;
         })
         this.setState({filter: options, filterQuery: filter});
-        incidentService.getAll(sorting, filter).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+        const {sorting, rowsPerPage, page} = this.state;
+        incidentService.getAll(sorting, filter, rowsPerPage, page).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+    }
+
+    handleChangePage(e, newPage){
+        this.setState({page: newPage});
+        const {sorting, filterQuery, rowsPerPage} = this.state;
+        incidentService.getAll(sorting, filterQuery, rowsPerPage, newPage).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+    }
+
+    handleChangeRowsPerPage(e){
+        this.setState({page: 0, rowsPerPage: parseInt(e.target.value, 10)});
+        const {sorting, filterQuery} = this.state;
+        incidentService.getAll(sorting, filterQuery, parseInt(e.target.value, 10), 0).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+    }
+
+    retrieveAllIncident(){
+        const {sorting, filterQuery, rowsPerPage, page} = this.state;
+        incidentService.getAll(sorting, filterQuery, rowsPerPage, page).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
     }
 
     render() {
-        const {incidents, currentUser, users, sorting, filter} = this.state;
+        const {incidents, meta, currentUser, users, sorting, filter, page, rowsPerPage} = this.state;
         return (
             <Container>
                 <Grid
@@ -172,28 +192,28 @@ class IncidentPage extends React.Component {
                     </TextField>
 
                     <FormControl variant="outlined" style={styles.formControl}>
-                        <InputLabel id="demo-simple-select-outlined-label">Filter</InputLabel>
+                        <InputLabel id="filter-outlined-label">Filter</InputLabel>
                         <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="demo-simple-select-outlined"
+                            labelId="filter-select-outlined-label"
+                            id="filter-select-outlined"
                             value={filter}
                             multiple
                             onChange={this.filterHandleChange}
                             label="Filter"
-                                renderValue={(selected) => (
-                                    <div style={styles.chips}>
-                                        {selected.map((value) => (
-                                            <Chip key={value} label={INCIDENT_TYPES.find(i => i.key === value).value} style={styles.chip} />
-                                        ))}
-                                    </div>
-                                )}
-                                MenuProps={MenuProps}
+                            renderValue={(selected) => (
+                                <div style={styles.chips}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={INCIDENT_TYPES.find(i => i.key === value).value} style={styles.chip} />
+                                    ))}
+                                </div>
+                            )}
+                            MenuProps={MenuProps}
                         >
-                                {INCIDENT_TYPES.map((type) => (
-                                    <MenuItem key={type.key} value={type.key} >
-                                        {type.value}
-                                    </MenuItem>
-                                ))}
+                            {INCIDENT_TYPES.map((type) => (
+                                <MenuItem key={type.key} value={type.key} >
+                                    {type.value}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
@@ -253,6 +273,19 @@ class IncidentPage extends React.Component {
                                 </TableRow>
                             ))}
                         </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10]}
+                                    count={meta.total}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onChangePage={this.handleChangePage}
+                                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                />
+                            </TableRow>
+                        </TableFooter>
+
                     </Table>
                 </TableContainer>}
                 {incidents.length <= 0 &&

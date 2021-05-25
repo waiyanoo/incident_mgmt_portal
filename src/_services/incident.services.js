@@ -10,7 +10,7 @@ export const incidentService = {
     resolve
 };
 
-function getAll(sorting, filter) {
+function getAll(sorting, filter, pageSize, page) {
     let url = `${config.apiUrl}/incidents`;
     if(sorting){
        url += `?${sorting}`;
@@ -18,6 +18,7 @@ function getAll(sorting, filter) {
     if(filter){
         url += filter;
     }
+    url += `&page=${page}&pageSize=${pageSize}`
     const requestOptions = {method: 'GET', headers: authHeader()};
     return fetch(url, requestOptions).then(handleResponse);
 }
