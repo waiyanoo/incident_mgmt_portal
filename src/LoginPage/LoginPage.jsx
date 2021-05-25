@@ -1,6 +1,15 @@
 import React from 'react';
 import {authenticationService, incidentService} from '@/_services';
-import {Button, Card, CardContent, CircularProgress, DialogActions, Grid, TextField} from "@material-ui/core";
+import {
+    Button,
+    Card,
+    CardContent,
+    CircularProgress,
+    Container,
+    DialogActions,
+    Grid,
+    TextField
+} from "@material-ui/core";
 import {Alert} from "@material-ui/lab";
 import {green} from "@material-ui/core/colors";
 import * as Yup from "yup";
@@ -40,7 +49,7 @@ class LoginPage extends React.Component {
     render() {
         const { isError } = this.state;
         return (
-            <div>
+            <Container>
                 <Grid
                     container
                     direction="column"
@@ -122,7 +131,7 @@ class LoginPage extends React.Component {
                     </Card>
                 </Grid>
 
-            </div>
+            </Container>
         )
     }
 }

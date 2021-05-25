@@ -10,9 +10,13 @@ export const incidentService = {
     resolve
 };
 
-function getAll() {
+function getAll(sorting) {
+    let url = `${config.apiUrl}/incidents`;
+    if(sorting){
+       url =  url + '?' + sorting;
+    }
     const requestOptions = {method: 'GET', headers: authHeader()};
-    return fetch(`${config.apiUrl}/incidents`, requestOptions).then(handleResponse);
+    return fetch(url, requestOptions).then(handleResponse);
 }
 
 function getById(id) {

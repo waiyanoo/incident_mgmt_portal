@@ -1,21 +1,23 @@
-import React from 'react';
+import React from 'react'
 import {authenticationService, incidentService, userService} from "@/_services";
 import {
     Container,
-    Grid,
+    Grid, MenuItem,
     Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow, TextField
 } from "@material-ui/core";
 import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
 import {Alert} from "@material-ui/lab";
 import AcknowledgedIncidentDialog from "@/IncidentPage/AcknowledgedIncidentDialog";
 import ResolveIncidentDialog from "@/IncidentPage/ResolveIncidentDialog";
 import ViewIncidentDialog from "@/IncidentPage/ViewIncidentDialog";
+import Moment from "react-moment";
+import * as QueryString from "query-string"
 
 const INCIDENT_TYPES = [
     {key: 'injury', value: 'Injury'},
@@ -24,26 +26,39 @@ const INCIDENT_TYPES = [
     {key: 'theft', value: 'Theft'}
 ]
 
+const SORTING = [
+    {key: 'last_updated', value: 'Updated Time (Ascending)', sorting: 'sort[tsModified]=asc'},
+    {key: 'first_updated', value: 'Updated Time (Descending)', sorting: 'sort[tsModified]=desc'},
+    {key: 'incidentType_asc', value: 'Incident Type (A-Z)', sorting: 'sort[typeOfIncident]=asc'},
+    {key: 'incidentType_desc', value: 'Incident Type (Z-A)', sorting: 'sort[typeOfIncident]=desc'}
+]
+
 const styles = {
     grid : {
         marginLeft: 5
+    },
+    spacing: {
+        marginTop: 10,
+        marginBottom: 10
     }
 }
 
 class IncidentPage extends React.Component {
     constructor(props) {
         super(props);
-
-
+        // const parms =  QueryString.stringify(props.location.search);
+        // console.log(location.search)
         this.state = {
             incidents: [],
             meta: null,
             currentUser: authenticationService.currentUserValue,
             userFromApi: null,
-            users: null
+            users: null,
+            sorting: ''
         };
 
         this.callbackModal = this.callbackModal.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidMount() {
@@ -73,8 +88,18 @@ class IncidentPage extends React.Component {
 
     }
 
+    handleChange(e) {
+        this.setState({ sorting: e.target.value });
+        const sort = SORTING.find(sort => sort.key === e.target.value).sorting;
+        this.props.history.push({
+            pathname: '/incident',
+            search: `?${sort}`
+        })
+        incidentService.getAll(sort).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+    }
+
     render() {
-        const {incidents, currentUser, users} = this.state;
+        const {incidents, currentUser, users, sorting} = this.state;
         return (
             <Container>
                 <Grid
@@ -88,6 +113,27 @@ class IncidentPage extends React.Component {
                     <EditIncidentDialog users={users} incidentTypes={INCIDENT_TYPES} callbackModal={this.callbackModal}/>}
                 </Grid>
 
+                <Grid
+                    container
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="flex-start"
+                    style={styles.spacing}
+                >
+                    <TextField label="Sort by" name="sorting" style={{width: 250}}
+                               select fullWidth={false} variant="outlined"
+                               value={sorting} onChange={this.handleChange}
+                    >
+                        {SORTING.map(type => {
+                            return (
+                                <MenuItem key={type.key} value={type.key}>
+                                    {type.value}
+                                </MenuItem>)
+                        })}
+                    </TextField>
+
+                </Grid>
+
                 {incidents.length > 0 &&
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
@@ -99,6 +145,7 @@ class IncidentPage extends React.Component {
                                 <TableCell align="left">Handler</TableCell>
                                 <TableCell align="left">Acknowledged?</TableCell>
                                 <TableCell align="left">Resolved?</TableCell>
+                                <TableCell align="left">Last Updated</TableCell>
                                 <TableCell align="right">Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -113,6 +160,7 @@ class IncidentPage extends React.Component {
                                     <TableCell align="left">{this.getUserName(row.nameOfHandler)}</TableCell>
                                     <TableCell align="left">{row.isAcknowledged ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="left">{row.isResolved  ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell align="left"><Moment format="YYYY-MM-DD HH:mm">{row.tsModified}</Moment></TableCell>
                                     <TableCell align="right">
                                         <Grid
                                             container
