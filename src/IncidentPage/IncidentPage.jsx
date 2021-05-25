@@ -1,9 +1,10 @@
 import React from 'react'
 import {authenticationService, incidentService, userService} from "@/_services";
 import {
-    Container,
-    Grid, MenuItem,
-    Paper,
+    Chip,
+    Container, FormControl,
+    Grid, Input, InputLabel, MenuItem,
+    Paper, Select,
     Table,
     TableBody,
     TableCell,
@@ -27,10 +28,10 @@ const INCIDENT_TYPES = [
 ]
 
 const SORTING = [
-    {key: 'last_updated', value: 'Updated Time (Ascending)', sorting: 'sort[tsModified]=asc'},
-    {key: 'first_updated', value: 'Updated Time (Descending)', sorting: 'sort[tsModified]=desc'},
-    {key: 'incidentType_asc', value: 'Incident Type (A-Z)', sorting: 'sort[typeOfIncident]=asc'},
-    {key: 'incidentType_desc', value: 'Incident Type (Z-A)', sorting: 'sort[typeOfIncident]=desc'}
+    {key: 'sort[tsModified]=asc', value: 'Updated Time (Ascending)'},
+    {key: 'sort[tsModified]=desc', value: 'Updated Time (Descending)'},
+    {key: 'sort[typeOfIncident]=asc', value: 'Incident Type (A-Z)'},
+    {key: 'sort[typeOfIncident]=desc', value: 'Incident Type (Z-A)'}
 ]
 
 const styles = {
@@ -40,8 +41,31 @@ const styles = {
     spacing: {
         marginTop: 10,
         marginBottom: 10
-    }
+    },
+    formControl: {
+        marginTop: 10,
+        marginBottom: 10,
+        minWidth: 250
+    },
+    chips: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+    chip: {
+        margin: 2,
+    },
 }
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 class IncidentPage extends React.Component {
     constructor(props) {
@@ -54,11 +78,14 @@ class IncidentPage extends React.Component {
             currentUser: authenticationService.currentUserValue,
             userFromApi: null,
             users: null,
-            sorting: ''
+            sorting: 'sort[tsModified]=desc',
+            filter: [],
+            filterQuery: null
         };
 
         this.callbackModal = this.callbackModal.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.filterHandleChange = this.filterHandleChange.bind(this);
     }
 
     componentDidMount() {
@@ -75,11 +102,12 @@ class IncidentPage extends React.Component {
     }
 
     retrieveIncidents() {
-        incidentService.getAll().then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+        const {sorting} = this.state;
+        incidentService.getAll(sorting).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
     }
 
     getUserName(id) {
-        const {users, currentUser} = this.state
+        const {users, currentUser} = this.state;
         if (currentUser.role === 'Admin') {
             const user = users ? users.find(user => user.id === id) : null;
             return user ? user.fullName : '-';
@@ -89,17 +117,28 @@ class IncidentPage extends React.Component {
     }
 
     handleChange(e) {
+        const {filterQuery} = this.state
         this.setState({ sorting: e.target.value });
-        const sort = SORTING.find(sort => sort.key === e.target.value).sorting;
         this.props.history.push({
             pathname: '/incident',
-            search: `?${sort}`
+            search: `?${e.target.value}`
+        });
+        incidentService.getAll(e.target.value, filterQuery).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+    }
+
+    filterHandleChange(e){
+        const {sorting} = this.state;
+        const  options  = e.target.value;
+        let filter = '';
+        options.map(option => {
+            filter += `&filter[typeOfIncident]=${option}`;
         })
-        incidentService.getAll(sort).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
+        this.setState({filter: options, filterQuery: filter});
+        incidentService.getAll(sorting, filter).then(incidents => this.setState({incidents: incidents.data, meta: incidents.meta}));
     }
 
     render() {
-        const {incidents, currentUser, users, sorting} = this.state;
+        const {incidents, currentUser, users, sorting, filter} = this.state;
         return (
             <Container>
                 <Grid
@@ -120,7 +159,7 @@ class IncidentPage extends React.Component {
                     alignItems="flex-start"
                     style={styles.spacing}
                 >
-                    <TextField label="Sort by" name="sorting" style={{width: 250}}
+                    <TextField label="Sort by" name="sorting" style={styles.formControl}
                                select fullWidth={false} variant="outlined"
                                value={sorting} onChange={this.handleChange}
                     >
@@ -131,6 +170,32 @@ class IncidentPage extends React.Component {
                                 </MenuItem>)
                         })}
                     </TextField>
+
+                    <FormControl variant="outlined" style={styles.formControl}>
+                        <InputLabel id="demo-simple-select-outlined-label">Filter</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={filter}
+                            multiple
+                            onChange={this.filterHandleChange}
+                            label="Filter"
+                                renderValue={(selected) => (
+                                    <div style={styles.chips}>
+                                        {selected.map((value) => (
+                                            <Chip key={value} label={INCIDENT_TYPES.find(i => i.key === value).value} style={styles.chip} />
+                                        ))}
+                                    </div>
+                                )}
+                                MenuProps={MenuProps}
+                        >
+                                {INCIDENT_TYPES.map((type) => (
+                                    <MenuItem key={type.key} value={type.key} >
+                                        {type.value}
+                                    </MenuItem>
+                                ))}
+                        </Select>
+                    </FormControl>
 
                 </Grid>
 
