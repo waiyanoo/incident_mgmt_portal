@@ -12,6 +12,7 @@ import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
 import AcknowledgedIncidentDialog from "@/IncidentPage/AcknowledgedIncidentDialog";
 import ResolveIncidentDialog from "@/IncidentPage/ResolveIncidentDialog";
 import {Alert} from "@material-ui/lab";
+import DeleteIncidentDialog from "@/IncidentPage/DeleteIncidentDialog";
 
 class MoreActionButton extends React.Component {
     constructor(props) {
@@ -24,6 +25,7 @@ class MoreActionButton extends React.Component {
             anchorEl: false,
             openView: false,
             openEdit: false,
+            openDelete:false,
             openAcknowledge: false,
             openResolve: false,
             showSuccess: false,
@@ -35,10 +37,12 @@ class MoreActionButton extends React.Component {
         this.handleClose = this.handleClose.bind(this);
         this.handleViewOpen = this.handleViewOpen.bind(this);
         this.handleEditOpen = this.handleEditOpen.bind(this);
+        this.handleDeleteOpen = this.handleDeleteOpen.bind(this);
         this.handleAcknowledgeOpen = this.handleAcknowledgeOpen.bind(this);
         this.handleResolveOpen = this.handleResolveOpen.bind(this);
         this.callbackModal = this.callbackModal.bind(this);
         this.handleEditCallBackModal = this.handleEditCallBackModal.bind(this);
+        this.handleDeleteCallBackModal = this.handleDeleteCallBackModal.bind(this);
         this.handleAcknowledgeCallBackModal = this.handleAcknowledgeCallBackModal.bind(this);
         this.handleResolveCallBackModal = this.handleResolveCallBackModal.bind(this);
         this.handleSuccessSnackbarOpen = this.handleSuccessSnackbarOpen.bind(this);
@@ -63,6 +67,11 @@ class MoreActionButton extends React.Component {
 
     handleEditOpen(){
         this.setState({openEdit: true});
+        this.handleClose();
+    }
+
+    handleDeleteOpen(){
+        this.setState({openDelete: true});
         this.handleClose();
     }
 
@@ -99,6 +108,14 @@ class MoreActionButton extends React.Component {
         }
     }
 
+    handleDeleteCallBackModal(e) {
+        if(e.action === 'delete'){
+            this.deleteIncident();
+        } else {
+            this.callbackModal();
+        }
+    }
+
     handleAcknowledgeCallBackModal(e) {
         if(e.action === 'acknowledge'){
             this.acknowledgeIncident();
@@ -119,6 +136,7 @@ class MoreActionButton extends React.Component {
         this.setState({
             openView: false,
             openEdit: false,
+            openDelete: false,
             openAcknowledge: false,
             openResolve: false});
         this.props.callbackModal();
@@ -160,7 +178,8 @@ class MoreActionButton extends React.Component {
         incidentService.acknowledge(incident.id)
             .then(response => {
                 if (response) {
-                    this.handleSuccessSnackbarOpen('acknowledge successfully.');
+                    this.setState({incident: response.data});
+                    this.handleSuccessSnackbarOpen('Acknowledge successfully.');
                 } else {
                     this.handleErrorSnackbarOpen('Failed to acknowledge.');
                 }
@@ -171,10 +190,27 @@ class MoreActionButton extends React.Component {
             .finally(() => this.callbackModal());
     }
 
+    deleteIncident(){
+        const {incident} = this.state;
+        incidentService.delete(incident.id)
+            .then(response => {
+                if (response) {
+                    this.handleSuccessSnackbarOpen('Delete successfully.');
+                } else {
+                    this.handleErrorSnackbarOpen('Failed to delete.');
+                }
+            })
+            .catch(() => {
+                this.handleErrorSnackbarOpen('Failed to delete.');
+            })
+            .finally(() => this.callbackModal());
+    }
+
     resolveIncident(data) {
         incidentService.resolve(data)
             .then(response => {
                 if (response) {
+                    this.setState({incident: response.data});
                     this.handleSuccessSnackbarOpen('Resolve successfully.');
                 } else {
                     this.handleErrorSnackbarOpen('Failed to resolve');
@@ -187,7 +223,7 @@ class MoreActionButton extends React.Component {
     }
 
     render() {
-        const {anchorEl, incident, currentUser, users, incidentTypes, openView, openEdit, openAcknowledge, openResolve, showSuccess, showError, message } = this.state;
+        const {anchorEl, incident, currentUser, users, incidentTypes, openView, openEdit, openDelete, openAcknowledge, openResolve, showSuccess, showError, message } = this.state;
         return (
             <div>
                 {incident === null && <Button size="small" variant="outlined" color="primary" onClick={this.handleEditOpen}>
@@ -212,14 +248,21 @@ class MoreActionButton extends React.Component {
                     >
                         <MenuItem onClick={this.handleViewOpen}>View</MenuItem>
                         {incident.nameOfHandler === '' && currentUser.role === 'Admin' && <MenuItem onClick={this.handleEditOpen}>Edit</MenuItem>}
+                        {incident.nameOfHandler === '' && currentUser.role === 'Admin' && <MenuItem onClick={this.handleDeleteOpen}>Delete</MenuItem>}
                         {!incident.isResolved && !incident.isAcknowledged && incident.nameOfHandler === currentUser.id && <MenuItem onClick={this.handleAcknowledgeOpen}>Acknowledge</MenuItem>}
                         {!incident.isResolved && incident.isAcknowledged && incident.nameOfHandler === currentUser.id && <MenuItem onClick={this.handleResolveOpen}>Resolve</MenuItem>}
                     </Menu>
                 </div>}
 
+                {/*View Dialog*/}
                 {openView && <ViewIncidentDialog incident={incident} incidentTypes={incidentTypes} users={users} open={openView} callbackModal={this.callbackModal} />}
+                {/*Edit Dialog*/}
                 {openEdit && <EditIncidentDialog open={openEdit} users={users} incident={incident} incidentTypes={incidentTypes} callbackModal={this.handleEditCallBackModal}/>}
+                {/*Delete Dialog*/}
+                {openDelete && <DeleteIncidentDialog open={openDelete} incident={incident} callbackModal={this.handleDeleteCallBackModal}/>}
+                {/*Acknowledge Dialog*/}
                 {openAcknowledge && <AcknowledgedIncidentDialog open={openAcknowledge} incident={incident} callbackModal={this.handleAcknowledgeCallBackModal}/>}
+                {/*Resolve Dialog*/}
                 {openResolve && <ResolveIncidentDialog open={openResolve} incident={incident} callbackModal={this.handleResolveCallBackModal}/>}
                 <Snackbar open={showSuccess} autoHideDuration={1000} onClose={this.handlSnackbarClose}>
                     <Alert onClose={this.handlSnackbarClose} severity="success">

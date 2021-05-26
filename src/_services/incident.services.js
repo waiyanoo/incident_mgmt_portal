@@ -7,7 +7,8 @@ export const incidentService = {
     getAll,
     getById,
     acknowledge,
-    resolve
+    resolve,
+    delete: _delete
 };
 
 function getAll(sorting, filter, pageSize, page) {
@@ -46,6 +47,15 @@ function update({id, typeOfIncident, location, datetimeOfIncident, nameOfAffecte
     return fetch(`${config.apiUrl}/incidents/${id}`, requestOptions).then(handleResponse);
 }
 
+function _delete(id) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: authHeader(),
+        body: JSON.stringify({})
+    };
+    return fetch(`${config.apiUrl}/incidents/${id}`, requestOptions).then(handleResponse);
+}
+
 function acknowledge(id) {
     const requestOptions = {
         method: 'POST',
@@ -54,6 +64,7 @@ function acknowledge(id) {
     };
     return fetch(`${config.apiUrl}/incidents/${id}/acknowledge`, requestOptions).then(handleResponse);
 }
+
 function resolve({id, comment}) {
     const requestOptions = {
         method: 'POST',
