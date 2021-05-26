@@ -19,6 +19,7 @@ import ResolveIncidentDialog from "@/IncidentPage/ResolveIncidentDialog";
 import ViewIncidentDialog from "@/IncidentPage/ViewIncidentDialog";
 import Moment from "react-moment";
 import * as QueryString from "query-string"
+import MoreActionButton from "@/IncidentPage/MoreActionButton";
 
 const INCIDENT_TYPES = [
     {key: 'injury', value: 'Injury'},
@@ -169,7 +170,7 @@ class IncidentPage extends React.Component {
                 >
                     <h2>Incident</h2>
                     {currentUser.role === 'Admin' && users &&
-                    <EditIncidentDialog users={users} incidentTypes={INCIDENT_TYPES} callbackModal={this.callbackModal}/>}
+                    <MoreActionButton incidentTypes={INCIDENT_TYPES} users={users} callbackModal={this.callbackModal}/>}
                 </Grid>
 
                 <Grid
@@ -247,28 +248,7 @@ class IncidentPage extends React.Component {
                                     <TableCell align="left">{row.isResolved  ? 'Yes' : 'No'}</TableCell>
                                     <TableCell align="left"><Moment format="YYYY-MM-DD HH:mm">{row.tsModified}</Moment></TableCell>
                                     <TableCell align="right">
-                                        <Grid
-                                            container
-                                            direction="row"
-                                            justify="flex-end"
-                                            alignItems="center"
-                                        >
-                                            <Grid item>
-                                                <ViewIncidentDialog incident={row} incidentTypes={INCIDENT_TYPES} users={currentUser.role === 'Admin' ? users : [currentUser]}/>
-                                            </Grid>
-                                            <Grid item style={styles.grid}>
-                                                {row.nameOfHandler === '' && currentUser.role === 'Admin' &&
-                                                <EditIncidentDialog users={users} incident={row} incidentTypes={INCIDENT_TYPES}
-                                                                    callbackModal={this.callbackModal}/>}
-                                                {!row.isResolved &&
-                                                !row.isAcknowledged &&
-                                                row.nameOfHandler === currentUser.id &&
-                                                <AcknowledgedIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
-                                                {!row.isResolved && row.isAcknowledged && row.nameOfHandler === currentUser.id &&
-                                                <ResolveIncidentDialog incident={row} callbackModal={this.callbackModal}/>}
-                                            </Grid>
-
-                                        </Grid>
+                                        <MoreActionButton incident={row} incidentTypes={INCIDENT_TYPES} users={currentUser.role === 'Admin' ? users : [currentUser]} callbackModal={this.callbackModal}/>
                                     </TableCell>
                                 </TableRow>
                             ))}

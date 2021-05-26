@@ -10,7 +10,7 @@ import {
     Snackbar,
     TextField
 } from "@material-ui/core";
-import {DatePicker, DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
+import { DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 
 // pick a date util library
 import MomentUtils from '@date-io/moment';
@@ -35,7 +35,7 @@ class EditIncidentDialog extends React.Component {
             users: this.props.users ? this.props.users : [],
             isError: false,
             isCreate: true,
-            open: false,
+            open: this.props.open  ? this.props.open : false,
             showSuccess: false,
             showError: false,
         };
@@ -51,8 +51,9 @@ class EditIncidentDialog extends React.Component {
         this.setState({open: true});
     };
 
-    handleClose() {
-        this.props.callbackModal();
+    handleClose(e) {
+        console.log(e);
+        this.props.callbackModal(e);
         this.setState({ open: false });
     };
 
@@ -68,13 +69,27 @@ class EditIncidentDialog extends React.Component {
         this.setState({showSuccess: false, showError: false});
     }
 
+    componentWillUnmount() {
+        this.setState({
+            currentUser: null,
+            incident: null,
+            incidentTypes: [],
+            users: [],
+            isError: false,
+            isCreate: true,
+            open: false,
+            showSuccess: false,
+            showError: false,
+        })
+    }
+
     render() {
         const {currentUser, incident, incidentTypes, users, open, showSuccess, showError} = this.state;
         return (
             <div>
-                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    {incident ? 'Edit' : 'Create New Incident'}
-                </Button>
+                {/*<Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>*/}
+                {/*    {incident ? 'Edit' : 'Create New Incident'}*/}
+                {/*</Button>*/}
                 <MuiPickersUtilsProvider utils={MomentUtils}>
                     <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title">{incident ? 'Edit ' : 'Create New '}Incident</DialogTitle>
@@ -95,36 +110,9 @@ class EditIncidentDialog extends React.Component {
                                 setSubmitting(true);
                                 if (incident) {
                                     data.id = incident.id;
-                                    incidentService.update(data)
-                                        .then(response => {
-                                            if (response) {
-                                                this.setState({incident: response.data});
-                                                this.handleSuccessSnackbarOpen();
-                                                this.handleClose();
-                                            } else {
-                                                setSubmitting(false);
-                                                this.handleErrorSnackbarOpen();
-                                            }
-                                        })
-                                        .catch(() => {
-                                            this.handleErrorSnackbarOpen();
-                                            setSubmitting(false);
-                                        })
+                                    this.handleClose({action: 'edit', data});
                                 } else {
-                                    incidentService.create(data)
-                                        .then(response => {
-                                            if (response) {
-                                                this.handleSuccessSnackbarOpen();
-                                                this.handleClose();
-                                            } else {
-                                                setSubmitting(false);
-                                                this.handleErrorSnackbarOpen();
-                                            }
-                                        })
-                                        .catch(() => {
-                                            this.handleErrorSnackbarOpen();
-                                            setSubmitting(false);
-                                        })
+                                    this.handleClose({action: 'create', data});
                                 }
                             }}
                             initialValues={{

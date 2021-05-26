@@ -18,7 +18,8 @@ function getAll(sorting, filter, pageSize, page) {
     if(filter){
         url += filter;
     }
-    url += `&page=${page}&pageSize=${pageSize}`
+    if(page && pageSize) url += `&page=${page}&pageSize=${pageSize}`
+
     const requestOptions = {method: 'GET', headers: authHeader()};
     return fetch(url, requestOptions).then(handleResponse);
 }

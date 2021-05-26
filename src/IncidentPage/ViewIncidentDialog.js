@@ -10,15 +10,11 @@ class ViewIncidentDialog extends React.Component {
             incident: this.props.incident ? this.props.incident : null,
             users: this.props.users,
             incidentTypes: this.props.incidentTypes,
-            open: false
+            open: this.props.open ? this.props.open : false
         };
 
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
-    }
-
-    componentDidMount() {
-
     }
 
     handleClickOpen() {
@@ -30,6 +26,7 @@ class ViewIncidentDialog extends React.Component {
 
     handleClose() {
         this.setState({open: false});
+        this.props.callbackModal();
     };
 
     getUserName(id) {
@@ -43,9 +40,9 @@ class ViewIncidentDialog extends React.Component {
         const {open, incident, incidentTypes } = this.state;
         return (
             <div>
-                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    View
-                </Button>
+                {/*<Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>*/}
+                {/*    View*/}
+                {/*</Button>*/}
                 <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title"> Incident Details</DialogTitle>
                     <DialogContent>

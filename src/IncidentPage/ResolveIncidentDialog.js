@@ -25,7 +25,7 @@ class ResolveIncidentDialog extends React.Component {
         super(props);
         this.state = {
             incident: this.props.incident ? this.props.incident : null,
-            open: false,
+            open: this.props.open ? this.props.open : false,
             showSuccess: false,
             showError: false,
         };
@@ -57,7 +57,8 @@ class ResolveIncidentDialog extends React.Component {
     };
 
     handleClose() {
-        this.props.callbackModal();
+        const { incident } = this.state;
+        this.props.callbackModal(incident);
         this.setState({open: false});
     };
 
@@ -77,9 +78,9 @@ class ResolveIncidentDialog extends React.Component {
         const {open,incident, showSuccess, showError} = this.state;
         return (
             <div>
-                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Resolve
-                </Button>
+                {/*<Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>*/}
+                {/*    Resolve*/}
+                {/*</Button>*/}
                 <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title"> Resolve Incident</DialogTitle>
                     <DialogContent>

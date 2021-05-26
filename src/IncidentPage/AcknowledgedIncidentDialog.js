@@ -8,7 +8,7 @@ class AcknowledgedIncidentDialog extends React.Component {
         super(props);
         this.state = {
             incident: this.props.incident ? this.props.incident : null,
-            open: false,
+            open: this.props.open ? this.props.open : false,
             showSuccess: false,
             showError: false,
         };
@@ -40,7 +40,7 @@ class AcknowledgedIncidentDialog extends React.Component {
     };
 
     handleClose() {
-        this.props.callbackModal();
+        this.props.callbackModal({action: 'acknowledge'});
         this.setState({open: false});
     };
 
@@ -60,9 +60,9 @@ class AcknowledgedIncidentDialog extends React.Component {
         const {open, showSuccess, showError} = this.state;
         return (
             <div>
-                <Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Acknowledge
-                </Button>
+                {/*<Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>*/}
+                {/*    Acknowledge*/}
+                {/*</Button>*/}
                 <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title"> Acknowledge Incident</DialogTitle>
                     <DialogContent>
