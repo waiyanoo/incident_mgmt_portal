@@ -6,11 +6,8 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
-    Snackbar,
     TextField
 } from "@material-ui/core";
-import {incidentService} from "@/_services";
-import {Alert} from "@material-ui/lab";
 import * as Yup from "yup";
 import {Formik} from "formik";
 
@@ -23,84 +20,37 @@ const styles = {
 class ResolveIncidentDialog extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             incident: this.props.incident ? this.props.incident : null,
             open: this.props.open ? this.props.open : false,
-            showSuccess: false,
-            showError: false,
         };
 
-        this.handleAcknowledge = this.handleAcknowledge.bind(this);
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
-        this.handleSuccessSnackbarOpen = this.handleSuccessSnackbarOpen.bind(this);
-        this.handlSnackbarClose = this.handlSnackbarClose.bind(this);
-        this.handleErrorSnackbarOpen = this.handleErrorSnackbarOpen.bind(this);
-    }
-
-    handleAcknowledge() {
-        const {incident} = this.state;
-        incidentService.acknowledge(incident.id)
-            .then(response => {
-                if (response) {
-                    this.handleSuccessSnackbarOpen();
-                    this.handleClose();
-                } else {
-                    this.handleErrorSnackbarOpen();
-                    this.handleClose();
-                }
-            })
     }
 
     handleClickOpen() {
         this.setState({open: true});
     };
 
-    handleClose() {
-        const { incident } = this.state;
-        this.props.callbackModal(incident);
+    handleClose(e) {
+        this.props.callbackModal(e);
         this.setState({open: false});
     };
 
-    handleSuccessSnackbarOpen() {
-        this.setState({showSuccess: true});
-    };
-
-    handleErrorSnackbarOpen() {
-        this.setState({showError: true});
-    };
-
-    handlSnackbarClose() {
-        this.setState({showSuccess: false, showError: false});
-    };
-
     render() {
-        const {open,incident, showSuccess, showError} = this.state;
+        const { open, incident } = this.state;
         return (
             <div>
-                {/*<Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>*/}
-                {/*    Resolve*/}
-                {/*</Button>*/}
                 <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title"> Resolve Incident</DialogTitle>
                     <DialogContent>
                         <Formik
                             onSubmit={(values, { setSubmitting }) => {
-                                setSubmitting(true)
-                                incidentService.resolve({id: incident.id, comment: values.comment})
-                                    .then(response => {
-                                        if (response) {
-                                            this.handleSuccessSnackbarOpen();
-                                            this.handleClose();
-                                        } else {
-                                            setSubmitting(false);
-                                            this.handleErrorSnackbarOpen();
-                                        }
-                                    })
-                                    .catch(() => {
-                                        this.handleErrorSnackbarOpen();
-                                        setSubmitting(false);
-                                    })
+                                setSubmitting(true);
+                                let data = {id: incident.id, comment: values.comment};
+                                this.handleClose({action: 'resolve', data});
                             }}
                             initialValues={{
                                 comment: ''
@@ -143,16 +93,6 @@ class ResolveIncidentDialog extends React.Component {
                         </Formik>
                     </DialogContent>
                 </Dialog>
-                <Snackbar open={showSuccess} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
-                    <Alert onClose={this.handlSnackbarClose} severity="success">
-                        Resolve successfully saved.
-                    </Alert>
-                </Snackbar>
-                <Snackbar open={showError} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
-                    <Alert onClose={this.handlSnackbarClose} severity="error">
-                        Failed to resolve the incident.
-                    </Alert>
-                </Snackbar>
             </div>
         )
 

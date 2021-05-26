@@ -40,6 +40,7 @@ class MoreActionButton extends React.Component {
         this.callbackModal = this.callbackModal.bind(this);
         this.handleEditCallBackModal = this.handleEditCallBackModal.bind(this);
         this.handleAcknowledgeCallBackModal = this.handleAcknowledgeCallBackModal.bind(this);
+        this.handleResolveCallBackModal = this.handleResolveCallBackModal.bind(this);
         this.handleSuccessSnackbarOpen = this.handleSuccessSnackbarOpen.bind(this);
         this.handlSnackbarClose = this.handlSnackbarClose.bind(this);
         this.handleErrorSnackbarOpen = this.handleErrorSnackbarOpen.bind(this);
@@ -98,9 +99,17 @@ class MoreActionButton extends React.Component {
         }
     }
 
-    handleAcknowledgeCallBackModal (e){
+    handleAcknowledgeCallBackModal(e) {
         if(e.action === 'acknowledge'){
             this.acknowledgeIncident();
+        } else {
+            this.callbackModal();
+        }
+    }
+
+    handleResolveCallBackModal(e) {
+        if(e.action === 'resolve'){
+            this.resolveIncident(e.data);
         } else {
             this.callbackModal();
         }
@@ -162,6 +171,21 @@ class MoreActionButton extends React.Component {
             .finally(() => this.callbackModal());
     }
 
+    resolveIncident(data) {
+        incidentService.resolve(data)
+            .then(response => {
+                if (response) {
+                    this.handleSuccessSnackbarOpen('Resolve successfully.');
+                } else {
+                    this.handleErrorSnackbarOpen('Failed to resolve');
+                }
+            })
+            .catch(() => {
+                this.handleErrorSnackbarOpen('Failed to resolve');
+            })
+            .finally(() => this.callbackModal());
+    }
+
     render() {
         const {anchorEl, incident, currentUser, users, incidentTypes, openView, openEdit, openAcknowledge, openResolve, showSuccess, showError, message } = this.state;
         return (
@@ -196,7 +220,7 @@ class MoreActionButton extends React.Component {
                 {openView && <ViewIncidentDialog incident={incident} incidentTypes={incidentTypes} users={users} open={openView} callbackModal={this.callbackModal} />}
                 {openEdit && <EditIncidentDialog open={openEdit} users={users} incident={incident} incidentTypes={incidentTypes} callbackModal={this.handleEditCallBackModal}/>}
                 {openAcknowledge && <AcknowledgedIncidentDialog open={openAcknowledge} incident={incident} callbackModal={this.handleAcknowledgeCallBackModal}/>}
-                {openResolve && <ResolveIncidentDialog open={openResolve} incident={incident} callbackModal={this.callbackModal}/>}
+                {openResolve && <ResolveIncidentDialog open={openResolve} incident={incident} callbackModal={this.handleResolveCallBackModal}/>}
                 <Snackbar open={showSuccess} autoHideDuration={1000} onClose={this.handlSnackbarClose}>
                     <Alert onClose={this.handlSnackbarClose} severity="success">
                         {message}
