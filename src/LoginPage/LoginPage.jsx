@@ -111,11 +111,11 @@ class LoginPage extends React.Component {
                                                            onChange={handleChange}
                                                            type="password" variant="outlined"
                                                            error={errors.password && touched.password}
-                                                           helperText={errors.password && touched.password ? errors.password.me : ' '}
+                                                           helperText={errors.password && touched.password ? 'Password is invalid' : ' '}
                                                 />
                                                 <Button type="submit" variant="outlined" color="primary"
                                                         disabled={isSubmitting}>LOGIN</Button>
-                                                {isSubmitting && <CircularProgress size={24} className={styles.buttonProgress}/>
+                                                {isSubmitting && <CircularProgress size={24} style={styles.buttonProgress}/>
                                                 }
                                                 {isError &&
                                                 <Alert style={styles.alertPadding} severity="error">Email or password is
