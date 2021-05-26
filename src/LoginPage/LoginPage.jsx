@@ -1,12 +1,11 @@
 import React from 'react';
-import {authenticationService, incidentService} from '@/_services';
+import {authenticationService} from '@/_services';
 import {
     Button,
     Card,
     CardContent,
     CircularProgress,
     Container,
-    DialogActions,
     Grid,
     TextField
 } from "@material-ui/core";
@@ -17,6 +16,7 @@ import {Formik} from "formik";
 
 const styles = {
     cardStyle: {
+        marginTop: 20,
         width: 350,
     },
     alertPadding: {
@@ -56,6 +56,7 @@ class LoginPage extends React.Component {
                     justify="center"
                     alignItems="center"
                 >
+
                     <Card style={styles.cardStyle}>
                         <CardContent>
                             <h2>Login</h2>
