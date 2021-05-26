@@ -7,7 +7,6 @@ import {
     DialogTitle,
     Grid,
     MenuItem,
-    Snackbar,
     TextField
 } from "@material-ui/core";
 import { DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
@@ -16,8 +15,7 @@ import { DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import {Alert} from "@material-ui/lab";
-import {authenticationService, incidentService} from "@/_services";
+import {authenticationService} from "@/_services";
 
 const styles = {
     dialogAction: {
@@ -33,18 +31,11 @@ class EditIncidentDialog extends React.Component {
             incident: this.props.incident ? this.props.incident : null,
             incidentTypes: this.props.incidentTypes,
             users: this.props.users ? this.props.users : [],
-            isError: false,
-            isCreate: true,
             open: this.props.open  ? this.props.open : false,
-            showSuccess: false,
-            showError: false,
         };
 
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
-        this.handleSuccessSnackbarOpen = this.handleSuccessSnackbarOpen.bind(this);
-        this.handlSnackbarClose = this.handlSnackbarClose.bind(this);
-        this.handleErrorSnackbarOpen = this.handleErrorSnackbarOpen.bind(this);
     }
 
     handleClickOpen() {
@@ -52,22 +43,9 @@ class EditIncidentDialog extends React.Component {
     };
 
     handleClose(e) {
-        console.log(e);
         this.props.callbackModal(e);
         this.setState({ open: false });
     };
-
-    handleSuccessSnackbarOpen() {
-        this.setState({showSuccess: true});
-    }
-
-    handleErrorSnackbarOpen() {
-        this.setState({showError: true});
-    }
-
-    handlSnackbarClose() {
-        this.setState({showSuccess: false, showError: false});
-    }
 
     componentWillUnmount() {
         this.setState({
@@ -75,21 +53,14 @@ class EditIncidentDialog extends React.Component {
             incident: null,
             incidentTypes: [],
             users: [],
-            isError: false,
-            isCreate: true,
-            open: false,
-            showSuccess: false,
-            showError: false,
+            open: false
         })
     }
 
     render() {
-        const {currentUser, incident, incidentTypes, users, open, showSuccess, showError} = this.state;
+        const {currentUser, incident, incidentTypes, users, open} = this.state;
         return (
             <div>
-                {/*<Button size="small" variant="outlined" color="primary" onClick={this.handleClickOpen}>*/}
-                {/*    {incident ? 'Edit' : 'Create New Incident'}*/}
-                {/*</Button>*/}
                 <MuiPickersUtilsProvider utils={MomentUtils}>
                     <Dialog open={open} onClose={this.handleClose} fullWidth={true} maxWidth={'sm'}>
                     <DialogTitle id="form-dialog-title">{incident ? 'Edit ' : 'Create New '}Incident</DialogTitle>
@@ -236,16 +207,6 @@ class EditIncidentDialog extends React.Component {
                     </DialogContent>
                 </Dialog>
                 </MuiPickersUtilsProvider>
-                <Snackbar open={showSuccess} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
-                    <Alert onClose={this.handlSnackbarClose} severity="success">
-                        {incident ? 'Incident successfully updated.' : 'Incident successfully created.'}
-                    </Alert>
-                </Snackbar>
-                <Snackbar open={showError} autoHideDuration={6000} onClose={this.handlSnackbarClose}>
-                    <Alert onClose={this.handlSnackbarClose} severity="error">
-                        {incident ? 'Failed to update Incident. Please try again.' : 'Failed to create Incident. Please try again.'}
-                    </Alert>
-                </Snackbar>
             </div>
         );
     }

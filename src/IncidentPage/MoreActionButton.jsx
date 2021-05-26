@@ -28,6 +28,7 @@ class MoreActionButton extends React.Component {
             openResolve: false,
             showSuccess: false,
             showError: false,
+            messsage: ''
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -38,6 +39,7 @@ class MoreActionButton extends React.Component {
         this.handleResolveOpen = this.handleResolveOpen.bind(this);
         this.callbackModal = this.callbackModal.bind(this);
         this.handleEditCallBackModal = this.handleEditCallBackModal.bind(this);
+        this.handleAcknowledgeCallBackModal = this.handleAcknowledgeCallBackModal.bind(this);
         this.handleSuccessSnackbarOpen = this.handleSuccessSnackbarOpen.bind(this);
         this.handlSnackbarClose = this.handlSnackbarClose.bind(this);
         this.handleErrorSnackbarOpen = this.handleErrorSnackbarOpen.bind(this);
@@ -74,12 +76,12 @@ class MoreActionButton extends React.Component {
     }
 
 
-    handleSuccessSnackbarOpen() {
-        this.setState({showSuccess: true});
+    handleSuccessSnackbarOpen(message) {
+        this.setState({showSuccess: true, message});
     }
 
-    handleErrorSnackbarOpen() {
-        this.setState({showError: true});
+    handleErrorSnackbarOpen(message) {
+        this.setState({showError: true, message});
     }
 
     handlSnackbarClose() {
@@ -91,6 +93,14 @@ class MoreActionButton extends React.Component {
             this.editIncident(e.data);
         } else if (e.action === 'create'){
             this.createIncident(e.data);
+        } else {
+            this.callbackModal();
+        }
+    }
+
+    handleAcknowledgeCallBackModal (e){
+        if(e.action === 'acknowledge'){
+            this.acknowledgeIncident();
         } else {
             this.callbackModal();
         }
@@ -110,13 +120,13 @@ class MoreActionButton extends React.Component {
             .then(response => {
                 if (response) {
                     this.setState({incident: response.data});
-                    this.handleSuccessSnackbarOpen();
+                    this.handleSuccessSnackbarOpen('Incident successfully updated.');
                 } else {
-                    this.handleErrorSnackbarOpen();
+                    this.handleErrorSnackbarOpen('Failed to update Incident. Please try again.');
                 }
             })
             .catch(() => {
-                this.handleErrorSnackbarOpen();
+                this.handleErrorSnackbarOpen('Failed to update Incident. Please try again.');
             })
             .finally(() => this.callbackModal());
     }
@@ -125,20 +135,35 @@ class MoreActionButton extends React.Component {
         incidentService.create(data)
             .then(response => {
                 if (response) {
-                    this.handleSuccessSnackbarOpen();
-                    this.handleClose();
+                    this.handleSuccessSnackbarOpen('Incident successfully created.');
                 } else {
-                    this.handleErrorSnackbarOpen();
+                    this.handleErrorSnackbarOpen('Failed to create Incident. Please try again.');
                 }
             })
             .catch(() => {
-                this.handleErrorSnackbarOpen();
+                this.handleErrorSnackbarOpen('Failed to create Incident. Please try again.');
+            })
+            .finally(() => this.callbackModal());
+    }
+
+    acknowledgeIncident(){
+        const {incident} = this.state;
+        incidentService.acknowledge(incident.id)
+            .then(response => {
+                if (response) {
+                    this.handleSuccessSnackbarOpen('acknowledge successfully.');
+                } else {
+                    this.handleErrorSnackbarOpen('Failed to acknowledge.');
+                }
+            })
+            .catch(() => {
+                this.handleErrorSnackbarOpen('Failed to acknowledge.');
             })
             .finally(() => this.callbackModal());
     }
 
     render() {
-        const {anchorEl, incident, currentUser, users, incidentTypes, openView, openEdit, openAcknowledge, openResolve, showSuccess, showError } = this.state;
+        const {anchorEl, incident, currentUser, users, incidentTypes, openView, openEdit, openAcknowledge, openResolve, showSuccess, showError, message } = this.state;
         return (
             <div>
                 {incident === null && <Button size="small" variant="outlined" color="primary" onClick={this.handleEditOpen}>
@@ -170,16 +195,16 @@ class MoreActionButton extends React.Component {
 
                 {openView && <ViewIncidentDialog incident={incident} incidentTypes={incidentTypes} users={users} open={openView} callbackModal={this.callbackModal} />}
                 {openEdit && <EditIncidentDialog open={openEdit} users={users} incident={incident} incidentTypes={incidentTypes} callbackModal={this.handleEditCallBackModal}/>}
-                {openAcknowledge && <AcknowledgedIncidentDialog open={openAcknowledge} incident={incident} callbackModal={this.callbackModal}/>}
+                {openAcknowledge && <AcknowledgedIncidentDialog open={openAcknowledge} incident={incident} callbackModal={this.handleAcknowledgeCallBackModal}/>}
                 {openResolve && <ResolveIncidentDialog open={openResolve} incident={incident} callbackModal={this.callbackModal}/>}
                 <Snackbar open={showSuccess} autoHideDuration={1000} onClose={this.handlSnackbarClose}>
                     <Alert onClose={this.handlSnackbarClose} severity="success">
-                        {incident ? 'Incident successfully updated.' : 'Incident successfully created.'}
+                        {message}
                     </Alert>
                 </Snackbar>
                 <Snackbar open={showError} autoHideDuration={1000} onClose={this.handlSnackbarClose}>
                     <Alert onClose={this.handlSnackbarClose} severity="error">
-                        {incident ? 'Failed to update Incident. Please try again.' : 'Failed to create Incident. Please try again.'}
+                        {message}
                     </Alert>
                 </Snackbar>
             </div>
