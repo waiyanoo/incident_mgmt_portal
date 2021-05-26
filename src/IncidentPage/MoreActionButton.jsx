@@ -7,12 +7,12 @@ import {
 } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import {authenticationService, incidentService} from "@/_services";
-import {Alert} from "@material-ui/lab";
 import ViewIncidentDialog from "@/IncidentPage/ViewIncidentDialog";
 import EditIncidentDialog from "@/IncidentPage/EditIncidentDialog";
-import DeleteIncidentDialog from "@/IncidentPage/DeleteIncidentDialog";
 import AcknowledgedIncidentDialog from "@/IncidentPage/AcknowledgedIncidentDialog";
 import ResolveIncidentDialog from "@/IncidentPage/ResolveIncidentDialog";
+import {Alert} from "@material-ui/lab";
+import DeleteIncidentDialog from "@/IncidentPage/DeleteIncidentDialog";
 
 class MoreActionButton extends React.Component {
     constructor(props) {
